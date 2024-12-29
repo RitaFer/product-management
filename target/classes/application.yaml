@@ -4,10 +4,6 @@ server:
   port: 8080
   shutdown: graceful
 
-# TODO: input my sendgrid api key
-#sendgrid:
-#  api-key: YOUR_SENDGRID_API_KEY
-
 spring:
   application:
     name: Product Management API
