@@ -7,19 +7,17 @@ import com.rita.product_management.core.gateway.TokenGateway;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UnitUseCase;
 import com.rita.product_management.core.usecase.user.command.ChangePasswordCommand;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 @Component
 @Validated
+@AllArgsConstructor
 public class ChangePasswordUseCase implements UnitUseCase<ChangePasswordCommand> {
+
     private final TokenGateway tokenGateway;
     private final UserGateway userGateway;
-
-    public ChangePasswordUseCase(TokenGateway tokenGateway, UserGateway userGateway) {
-        this.tokenGateway = tokenGateway;
-        this.userGateway = userGateway;
-    }
 
     @Override
     public void execute(ChangePasswordCommand command) {
