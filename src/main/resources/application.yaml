@@ -4,9 +4,8 @@ server:
   port: 8080
   shutdown: graceful
 
-# TODO: input my sendgrid api key
-#sendgrid:
-#  api-key: YOUR_SENDGRID_API_KEY
+email-server:
+  key: 776ee04896f1b54148bf07acaef1d6c9
 
 spring:
   application:

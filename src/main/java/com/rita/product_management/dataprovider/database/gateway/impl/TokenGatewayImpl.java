@@ -1,11 +1,13 @@
 package com.rita.product_management.dataprovider.database.gateway.impl;
 
+import com.rita.product_management.core.common.exception.BusinessException;
 import com.rita.product_management.core.domain.Token;
 import com.rita.product_management.core.gateway.TokenGateway;
 import com.rita.product_management.dataprovider.database.entity.TokenEntity;
 import com.rita.product_management.dataprovider.database.repository.TokenRepository;
 import com.rita.product_management.dataprovider.mapper.TokenMapper;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,6 +50,12 @@ public class TokenGatewayImpl implements TokenGateway {
         }
 
         return validToken.get().getToken().equalsIgnoreCase(code);
+    }
+
+    @Override
+    public Token findToken(String token) {
+        return tokenRepository.findByToken(token).map(tokenMapper::fromEntityToModel).orElseThrow(
+                () -> new NotFoundException("Token not found"));
     }
 
     private boolean canGenerateNewToken(String userId) {

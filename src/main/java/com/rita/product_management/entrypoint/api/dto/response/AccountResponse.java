@@ -3,7 +3,7 @@ package com.rita.product_management.entrypoint.api.dto.response;
 import com.rita.product_management.core.domain.enums.UserType;
 import jakarta.validation.constraints.NotNull;
 
-public record Account(
+public record AccountResponse(
         @NotNull String id,
         @NotNull String name,
         @NotNull String email,

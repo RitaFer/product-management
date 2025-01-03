@@ -1,8 +1,14 @@
 package com.rita.product_management.core.domain.user;
 
 import com.rita.product_management.core.domain.enums.UserType;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
+import java.util.Random;
+
+import static com.rita.product_management.core.common.util.RandomPasswordGenerator.generatePassword;
 
 public class User {
 
@@ -19,10 +25,15 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, UserType role) {
-        this.username = username;
-        this.password = password;
+    public User(String name, String email, UserType role) {
+        this.name = name;
+        this.active = false;
+        this.username = generateUsername(name);
+        this.email = email;
+        this.password = generatePassword();
         this.role = role;
+        this.createdAt = Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime();;
+        this.updatedAt = createdAt;
     }
 
     public String getId() {
@@ -89,12 +100,27 @@ public class User {
         this.role = role;
     }
 
-    private void setCreatedAt(LocalDateTime createdAt){
+    public void setCreatedAt(LocalDateTime createdAt){
         this.createdAt = createdAt;
     }
 
-    private void setUpdatedAt(LocalDateTime updatedAt){
+    public void setUpdatedAt(LocalDateTime updatedAt){
         this.updatedAt = updatedAt;
+    }
+
+    public static String generateUsername(String name) {
+        String baseName = name.toLowerCase().replaceAll("\\s+", "");
+
+        Random random = new Random();
+        int randomNumber = 100 + random.nextInt(900);
+
+        String[] usernameOptions = {
+                baseName + randomNumber,
+                randomNumber + baseName,
+        };
+
+        int optionIndex = random.nextInt(usernameOptions.length);
+        return usernameOptions[optionIndex];
     }
 
     @Override

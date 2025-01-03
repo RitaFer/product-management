@@ -1,5 +1,7 @@
 package com.rita.product_management.entrypoint.api.config;
 
+import com.rita.product_management.core.common.exception.BusinessException;
+import com.rita.product_management.core.common.exception.NoChangesException;
 import com.rita.product_management.core.common.exception.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
@@ -18,6 +21,20 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorMessage> handleUserNotFoundException(UserNotFoundException ex){
         var errorMessage = new ErrorMessage(NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(errorMessage, NOT_FOUND);
+    }
+
+    @ResponseStatus(value = BAD_REQUEST)
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorMessage> handleUserNotFoundException(BusinessException ex){
+        var errorMessage = new ErrorMessage(BAD_REQUEST.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(errorMessage, BAD_REQUEST);
+    }
+
+    @ResponseStatus(value = BAD_REQUEST)
+    @ExceptionHandler(NoChangesException.class)
+    public ResponseEntity<ErrorMessage> handleNoChangesInUpdateException(NoChangesException ex){
+        var errorMessage = new ErrorMessage(BAD_REQUEST.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(errorMessage, BAD_REQUEST);
     }
 
 }

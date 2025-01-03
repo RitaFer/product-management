@@ -1,8 +1,9 @@
 package com.rita.product_management.entrypoint.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rita.product_management.entrypoint.api.config.ErrorMessage;
 import com.rita.product_management.entrypoint.api.dto.request.AuthRequest;
-import com.rita.product_management.entrypoint.api.dto.request.ChangePassword;
+import com.rita.product_management.entrypoint.api.dto.request.ChangePasswordRequest;
 import com.rita.product_management.entrypoint.api.dto.response.AuthResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,12 +28,12 @@ public interface AuthController {
     @PostMapping(path = "/forget-password", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "200", description = "Requested token for reset password", content = @Content(schema = @Schema()))
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    ResponseEntity<Void> forgetPassword(@RequestParam @Valid String username);
+    ResponseEntity<Void> forgetPassword(@RequestParam @Valid String username) throws JsonProcessingException;
 
     @Operation(summary = "Change Password")
     @PostMapping(path = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(responseCode = "200", description = "New password saved", content = @Content(schema = @Schema()))
     @ApiResponse(responseCode = "403", description = "Invalid Code", content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-    ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePassword code);
+    ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordRequest request);
 
 }

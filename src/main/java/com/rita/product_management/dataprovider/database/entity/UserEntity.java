@@ -3,16 +3,14 @@ package com.rita.product_management.dataprovider.database.entity;
 import com.rita.product_management.core.domain.enums.UserType;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-
-import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
 
     @Id
@@ -34,34 +32,19 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Enumerated(value = STRING)
     private UserType role;
 
+    @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     public UserEntity() {
-    }
-
-    public UserEntity(Boolean active, String name, String username, String email, String password, UserType role) {
-        this.active = active;
-        this.name = name;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    public UserEntity(String id, Boolean active, String username, String password, UserType role) {
-        this.id = id;
-        this.active = active;
-        this.username = username;
-        this.password = password;
-        this.role = role;
     }
 
     public String getId() {
@@ -128,13 +111,12 @@ public class UserEntity {
         this.role = role;
     }
 
-    @PostUpdate
-    private void setUpdatedAt(){
-        this.updatedAt = Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime();
+    public void setCreatedAt(LocalDateTime createdAt){
+        this.createdAt = createdAt;
     }
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime();
+    public void setUpdatedAt(LocalDateTime updatedAt){
+        this.updatedAt = updatedAt;
     }
+
 }

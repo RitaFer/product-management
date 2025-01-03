@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-12-28T21:44:26-0400",
+    date = "2025-01-02T22:00:18-0400",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.5 (Amazon.com Inc.)"
 )
 @Component
@@ -25,6 +25,8 @@ public class UserMapperImpl implements UserMapper {
         user.setUsername( userEntity.getUsername() );
         user.setPassword( userEntity.getPassword() );
         user.setRole( userEntity.getRole() );
+        user.setCreatedAt( userEntity.getCreatedAt() );
+        user.setUpdatedAt( userEntity.getUpdatedAt() );
         user.setActive( userEntity.isActive() );
         user.setName( userEntity.getName() );
         user.setEmail( userEntity.getEmail() );
@@ -44,6 +46,8 @@ public class UserMapperImpl implements UserMapper {
         userEntity.setUsername( user.getUsername() );
         userEntity.setPassword( user.getPassword() );
         userEntity.setRole( user.getRole() );
+        userEntity.setCreatedAt( user.getCreatedAt() );
+        userEntity.setUpdatedAt( user.getUpdatedAt() );
         userEntity.setActive( user.isActive() );
         userEntity.setName( user.getName() );
         userEntity.setEmail( user.getEmail() );

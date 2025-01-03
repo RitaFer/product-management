@@ -4,6 +4,9 @@ server:
   port: 8080
   shutdown: graceful
 
+email-server:
+  key: 776ee04896f1b54148bf07acaef1d6c9
+
 spring:
   application:
     name: Product Management API

@@ -16,20 +16,28 @@ public class DataInitializer {
     CommandLineRunner initDatabase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             Optional<UserEntity> adminUser = userRepository.findByUsername("admin");
-            Optional<UserEntity> stockistUser = userRepository.findByUsername("admin");
+            Optional<UserEntity> stockistUser = userRepository.findByUsername("stockist");
 
             adminUser.ifPresent(userRepository::delete);
             stockistUser.ifPresent(userRepository::delete);
 
-            if (adminUser.isEmpty()) {
-                UserEntity admin = new UserEntity(true, "First Admin User", "admin", "rialf.ferreira@gmail.com", passwordEncoder.encode("Admin@123"), UserType.ADMIN);
-                userRepository.save(admin);
-            }
+            UserEntity admin = new UserEntity();
+            admin.setActive(true);
+            admin.setName("First Admin User");
+            admin.setUsername("admin");
+            admin.setEmail("rialf.ferreira@gmail.com");
+            admin.setPassword(passwordEncoder.encode("Admin@123"));
+            admin.setRole(UserType.ADMIN);
+            userRepository.save(admin);
 
-            if (stockistUser.isEmpty()) {
-                UserEntity stockist = new UserEntity(true, "First Stockist User", "stockist", "iwjkwoods@gmail.com", passwordEncoder.encode("Stockist@123"), UserType.STOCKIST);
-                userRepository.save(stockist);
-            }
+            UserEntity stockist = new UserEntity();
+            stockist.setActive(true);
+            stockist.setName("First Stockist User");
+            stockist.setUsername("stockist");
+            stockist.setEmail("iwjkwoods@gmail.com");
+            stockist.setPassword(passwordEncoder.encode("Stockist@123"));
+            stockist.setRole(UserType.STOCKIST);
+            userRepository.save(stockist);
 
             System.out.print("[DataInitializer] Default users initialized!");
         };

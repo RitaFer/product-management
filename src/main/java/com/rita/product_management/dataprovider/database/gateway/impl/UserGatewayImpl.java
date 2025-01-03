@@ -5,6 +5,8 @@ import com.rita.product_management.core.domain.user.User;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.dataprovider.database.repository.UserRepository;
 import com.rita.product_management.dataprovider.mapper.UserMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,35 @@ public class UserGatewayImpl implements UserGateway, UserDetailsService {
         return userRepository.findByUsernameAndActiveIsTrue(username)
                 .map(userMapper::fromEntityToModel).orElseThrow(() ->
                         new UserNotFoundException("User with username = "+ username +", not found."));
+    }
+
+    @Override
+    public User findActiveUserById(String id) {
+        return userRepository.findByIdAndActiveIsTrue(id)
+                .map(userMapper::fromEntityToModel).orElseThrow(() ->
+                        new UserNotFoundException("User with id = "+ id +", not found."));
+    }
+
+    @Override
+    public User findUserById(String id) {
+        return userRepository.findById(id)
+                .map(userMapper::fromEntityToModel).orElseThrow(() ->
+                        new UserNotFoundException("User with id = "+ id +", not found."));
+    }
+
+    @Override
+    public User save(User user) {
+        return userMapper.fromEntityToModel(userRepository.save(userMapper.fromModelToEntity(user)));
+    }
+
+    @Override
+    public void delete(User user) {
+        userRepository.delete(userMapper.fromModelToEntity(user));
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userMapper::fromEntityToModel);
     }
 
     @Override
