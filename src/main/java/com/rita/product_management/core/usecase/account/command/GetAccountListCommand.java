@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 public record GetAccountListCommand(
         @NotNull Pageable pageable
 ) implements Command {
-}
 
+}

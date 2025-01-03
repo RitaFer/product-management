@@ -8,4 +8,5 @@ public record AuthResponse(
         @NotNull String token,
         @NotNull LocalDateTime expiration
 ) {
+
 }

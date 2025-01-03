@@ -1,5 +1,6 @@
 package com.rita.product_management.dataprovider.mapper;
 
+import com.rita.product_management.core.domain.enums.UserType;
 import com.rita.product_management.core.domain.user.User;
 import com.rita.product_management.dataprovider.database.entity.UserEntity;
 import javax.annotation.processing.Generated;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-02T22:00:18-0400",
+    date = "2025-01-03T10:48:00-0400",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.5 (Amazon.com Inc.)"
 )
 @Component
@@ -19,17 +20,11 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        User user = new User();
+        String name = null;
+        String email = null;
+        UserType role = null;
 
-        user.setId( userEntity.getId() );
-        user.setUsername( userEntity.getUsername() );
-        user.setPassword( userEntity.getPassword() );
-        user.setRole( userEntity.getRole() );
-        user.setCreatedAt( userEntity.getCreatedAt() );
-        user.setUpdatedAt( userEntity.getUpdatedAt() );
-        user.setActive( userEntity.isActive() );
-        user.setName( userEntity.getName() );
-        user.setEmail( userEntity.getEmail() );
+        User user = new User( name, email, role );
 
         return user;
     }
@@ -41,16 +36,6 @@ public class UserMapperImpl implements UserMapper {
         }
 
         UserEntity userEntity = new UserEntity();
-
-        userEntity.setId( user.getId() );
-        userEntity.setUsername( user.getUsername() );
-        userEntity.setPassword( user.getPassword() );
-        userEntity.setRole( user.getRole() );
-        userEntity.setCreatedAt( user.getCreatedAt() );
-        userEntity.setUpdatedAt( user.getUpdatedAt() );
-        userEntity.setActive( user.isActive() );
-        userEntity.setName( user.getName() );
-        userEntity.setEmail( user.getEmail() );
 
         return userEntity;
     }

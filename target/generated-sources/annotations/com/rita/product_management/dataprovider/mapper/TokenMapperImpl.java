@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-02T20:46:00-0400",
+    date = "2025-01-03T10:54:40-0400",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.5 (Amazon.com Inc.)"
 )
 @Component
@@ -19,7 +19,11 @@ public class TokenMapperImpl implements TokenMapper {
             return null;
         }
 
-        Token token = new Token();
+        String userId = null;
+
+        userId = tokenEntity.getUserId();
+
+        Token token = new Token( userId );
 
         return token;
     }
@@ -30,8 +34,21 @@ public class TokenMapperImpl implements TokenMapper {
             return null;
         }
 
-        TokenEntity tokenEntity = new TokenEntity();
+        TokenEntity.TokenEntityBuilder tokenEntity = TokenEntity.builder();
 
-        return tokenEntity;
+        tokenEntity.token( map( token ) );
+
+        return tokenEntity.build();
+    }
+
+    @Override
+    public String map(Token value) {
+        if ( value == null ) {
+            return null;
+        }
+
+        String string = new String();
+
+        return string;
     }
 }

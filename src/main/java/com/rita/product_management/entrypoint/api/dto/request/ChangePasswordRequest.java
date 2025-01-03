@@ -10,4 +10,5 @@ public record ChangePasswordRequest(
         @NotNull String password1,
         @NotNull String password2
 ) {
+
 }

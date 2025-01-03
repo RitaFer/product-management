@@ -9,4 +9,5 @@ public record UpdateAccountRequest(
         @NotNull String email,
         @NotNull UserType role
 ) {
+
 }

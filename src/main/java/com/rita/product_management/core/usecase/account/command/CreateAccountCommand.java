@@ -10,5 +10,5 @@ public record CreateAccountCommand(
         @NotNull @Email String email,
         @NotNull UserType role
 ) implements Command {
-}
 
+}

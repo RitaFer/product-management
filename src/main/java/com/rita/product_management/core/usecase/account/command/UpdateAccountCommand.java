@@ -10,5 +10,5 @@ public record UpdateAccountCommand(
         @NotNull String email,
         @NotNull UserType role
 ) implements Command {
-}
 
+}

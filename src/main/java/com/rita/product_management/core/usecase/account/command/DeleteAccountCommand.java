@@ -8,4 +8,5 @@ import java.util.List;
 public record DeleteAccountCommand(
         @NotNull List<String> ids
 ) implements Command {
+
 }

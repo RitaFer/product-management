@@ -1,5 +1,6 @@
 package com.rita.product_management.core.domain.user;
 
+import com.rita.product_management.core.common.util.RandomPasswordGenerator;
 import com.rita.product_management.core.domain.enums.UserType;
 
 import java.time.Instant;
@@ -8,8 +9,14 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.Random;
 
-import static com.rita.product_management.core.common.util.RandomPasswordGenerator.generatePassword;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Data
+@Slf4j
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     private String id;
@@ -22,95 +29,23 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public User() {
-    }
-
     public User(String name, String email, UserType role) {
+        log.info("Creating User with name: [{}], email: [{}], and role: [{}]", name, email, role);
         this.name = name;
         this.active = false;
         this.username = generateUsername(name);
         this.email = email;
         this.password = generatePassword();
+        log.debug("Generated password for user [{}]: [HIDDEN]", this.username);
         this.role = role;
-        this.createdAt = Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime();;
+        this.createdAt = Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime();
         this.updatedAt = createdAt;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Boolean isActive(){
-        return active;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public UserType getRole() {
-        return role;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRole(UserType role) {
-        this.role = role;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt){
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt){
-        this.updatedAt = updatedAt;
+        log.info("User [{}] created successfully.", this.username);
     }
 
     public static String generateUsername(String name) {
+        log.debug("Generating username for name: [{}]", name);
         String baseName = name.toLowerCase().replaceAll("\\s+", "");
-
         Random random = new Random();
         int randomNumber = 100 + random.nextInt(900);
 
@@ -120,24 +55,32 @@ public class User {
         };
 
         int optionIndex = random.nextInt(usernameOptions.length);
-        return usernameOptions[optionIndex];
+        String generatedUsername = usernameOptions[optionIndex];
+        log.debug("Generated username: [{}]", generatedUsername);
+        return generatedUsername;
+    }
+
+    public static String generatePassword() {
+        log.debug("Generating random password for new user...");
+        return RandomPasswordGenerator.generatePassword();
     }
 
     @Override
-    public boolean equals(Object o){
-        if(this == o){
-            return true;
-        }
-        if(o == null || getClass() != o.getClass()){
-            return false;
-        }
-        User that = (User) o;
-
-        return Objects.equals(username, that.username) && Objects.equals(role, that.role);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        boolean isEqual = Objects.equals(username, user.username) && role == user.role;
+        log.debug("Comparing User [{}] with another User [{}]: Equal = [{}]", this.username, user.username, isEqual);
+        return isEqual;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, role);
+        int hashCode = Objects.hash(username, role);
+        log.debug("Generated hashCode for User [{}]: [{}]", this.username, hashCode);
+        return hashCode;
     }
+
 }
+

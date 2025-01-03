@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 public interface UserGateway {
     User findUserByUsername(final String username);
     User findActiveUserByUsername(final String username);
-    User findActiveUserById(final String id);
     User findUserById(final String id);
     Page<User> findAll(final Pageable pageable);
     User save(final User user);

@@ -10,7 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface TokenRepository extends JpaRepository<TokenEntity, String> {
+
     List<TokenEntity> findByUserIdAndTokenUsedFalseOrderByCreatedAtDesc(String userId);
     Optional<TokenEntity> findByTokenAndTokenUsedFalseAndExpiredAtIsAfter(String code, LocalDateTime expiration);
     Optional<TokenEntity> findByToken(String code);
+
 }

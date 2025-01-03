@@ -10,4 +10,5 @@ public record SwitchAccountRequest(
         List<String> ids,
         @NotNull Boolean active
 ) {
+
 }

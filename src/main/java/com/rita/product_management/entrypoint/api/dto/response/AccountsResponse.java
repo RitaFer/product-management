@@ -7,4 +7,5 @@ public record AccountsResponse(
         @NotNull Boolean active,
         @NotNull String name
 ) {
+
 }

@@ -9,5 +9,5 @@ public record SwitchAccountCommand(
         @NotNull List<String> ids,
         @NotNull Boolean active
 ) implements Command {
-}
 
+}

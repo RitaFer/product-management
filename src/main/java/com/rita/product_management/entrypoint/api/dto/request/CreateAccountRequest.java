@@ -9,4 +9,5 @@ public record CreateAccountRequest(
         @NotNull @Email String email,
         @NotNull UserType role
 ) {
+
 }

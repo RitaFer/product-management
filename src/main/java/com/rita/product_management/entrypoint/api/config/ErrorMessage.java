@@ -7,4 +7,5 @@ public record ErrorMessage(
         String message,
         LocalDateTime timestamp
 ) {
+
 }

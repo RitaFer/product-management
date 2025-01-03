@@ -1,17 +1,12 @@
 package com.rita.product_management.dataprovider.database.entity;
 
-import com.rita.product_management.core.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.security.SecureRandom;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Random;
 
 
 @Data

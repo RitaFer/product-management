@@ -6,4 +6,5 @@ public record AuthRequest (
         @NotNull String username,
         @NotNull String password
 ) {
+
 }

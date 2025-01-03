@@ -9,4 +9,5 @@ public record AccountResponse(
         @NotNull String email,
         @NotNull UserType role
 ) {
+
 }
