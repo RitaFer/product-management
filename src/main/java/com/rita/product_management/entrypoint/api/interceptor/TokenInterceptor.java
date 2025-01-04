@@ -6,8 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,7 +26,7 @@ public class TokenInterceptor extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader("Authorization");
         log.debug("Processing request: [{} {}] with Authorization header: [{}]", request.getMethod(), request.getRequestURI(), authorizationHeader);
 
         try {
@@ -43,6 +43,7 @@ public class TokenInterceptor extends OncePerRequestFilter {
 
                     UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                             .username(username)
+                            .password("")
                             .roles(role)
                             .build();
 
@@ -51,12 +52,8 @@ public class TokenInterceptor extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     log.info("Authentication set for username: [{}]", username);
-                } else {
-                    log.warn("Token is expired for username: [{}]", username);
-                }
-            } else {
-                log.warn("No valid Authorization header found or it does not start with 'Bearer '");
-            }
+                } else log.warn("Token is expired for username: [{}]", username);
+            } else log.warn("No valid Authorization header found or it does not start with 'Bearer '");
 
         } catch (Exception e) {
             log.error("Error occurred while processing token for request: [{} {}]", request.getMethod(), request.getRequestURI(), e);

@@ -52,6 +52,7 @@
 /Users/ritaferreira/Documents/projects/personal/challenges/product-management/src/main/java/com/rita/product_management/entrypoint/api/dto/response/AccountsResponse.java
 /Users/ritaferreira/Documents/projects/personal/challenges/product-management/src/main/java/com/rita/product_management/entrypoint/api/dto/request/AuthRequest.java
 /Users/ritaferreira/Documents/projects/personal/challenges/product-management/src/main/java/com/rita/product_management/entrypoint/api/interceptor/TokenInterceptor.java
+/Users/ritaferreira/Documents/projects/personal/challenges/product-management/src/main/java/com/rita/product_management/infrastructure/configuration/JacksonConfig.java
 /Users/ritaferreira/Documents/projects/personal/challenges/product-management/src/main/java/com/rita/product_management/core/usecase/account/command/UpdateAccountCommand.java
 /Users/ritaferreira/Documents/projects/personal/challenges/product-management/src/main/java/com/rita/product_management/infrastructure/configuration/OpenApiConfig.java
 /Users/ritaferreira/Documents/projects/personal/challenges/product-management/src/main/java/com/rita/product_management/core/common/mapper/CustomMapper.java

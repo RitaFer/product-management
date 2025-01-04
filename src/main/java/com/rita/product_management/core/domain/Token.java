@@ -2,16 +2,15 @@ package com.rita.product_management.core.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Random;
-
-import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Slf4j
@@ -28,6 +27,7 @@ public class Token {
     private LocalDateTime expiredAt;
 
     public Token(String userId) {
+        if (userId == null || userId.isEmpty()) throw new IllegalArgumentException("userId must not be null or empty");
         log.info("Creating new Token for userId: [{}]", userId);
         this.createdAt = Instant.now().atZone(ZoneId.of("UTC")).toLocalDateTime();
         this.expiredAt = this.createdAt.plusHours(1);
@@ -40,14 +40,12 @@ public class Token {
 
     private String createToken() {
         log.debug("Generating random token...");
-        final Random random = new SecureRandom();
+        Random random = new SecureRandom();
         final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         final int TOKEN_LENGTH = 6;
 
         StringBuilder token = new StringBuilder(TOKEN_LENGTH);
-        for (int i = 0; i < TOKEN_LENGTH; i++) {
-            token.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
-        }
+        for (int i = 0; i < TOKEN_LENGTH; i++) token.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
         log.debug("Token generated successfully: [{}]", token);
         return token.toString();
     }

@@ -24,33 +24,27 @@ public class RandomPasswordGenerator {
         SecureRandom random = new SecureRandom();
         StringBuilder password = new StringBuilder();
 
-        try {
-            password.append(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
-            password.append(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
-            password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
-            password.append(SPECIAL_CHARACTERS.charAt(random.nextInt(SPECIAL_CHARACTERS.length())));
-            log.debug("Added at least one character from each group: [{}]", password);
+        password.append(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
+        password.append(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
+        password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
+        password.append(SPECIAL_CHARACTERS.charAt(random.nextInt(SPECIAL_CHARACTERS.length())));
+        log.debug("Added at least one character from each group: [{}]", password);
 
-            for (int i = 4; i < length; i++) {
-                password.append(ALL_CHARACTERS.charAt(random.nextInt(ALL_CHARACTERS.length())));
-            }
-            log.debug("Generated password before shuffling: [{}]", password);
-
-            List<Character> passwordCharacters = password.chars()
-                    .mapToObj(c -> (char) c)
-                    .collect(Collectors.toList());
-            Collections.shuffle(passwordCharacters, random);
-
-            String finalPassword = passwordCharacters.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining());
-            log.info("Password successfully generated.");
-            return finalPassword;
-
-        } catch (Exception e) {
-            log.error("Error during password generation", e);
-            return "";
+        for (int i = 4; i < length; i++) {
+            password.append(ALL_CHARACTERS.charAt(random.nextInt(ALL_CHARACTERS.length())));
         }
+        log.debug("Generated password before shuffling: [{}]", password);
+
+        List<Character> passwordCharacters = password.chars()
+            .mapToObj(c -> (char) c)
+            .collect(Collectors.toList());
+        Collections.shuffle(passwordCharacters, random);
+
+        String finalPassword = passwordCharacters.stream()
+            .map(String::valueOf)
+            .collect(Collectors.joining());
+        log.info("Password successfully generated.");
+        return finalPassword;
     }
 
 }

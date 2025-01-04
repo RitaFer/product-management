@@ -1,6 +1,5 @@
 package com.rita.product_management.core.usecase.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rita.product_management.core.domain.Token;
 import com.rita.product_management.core.domain.user.User;
 import com.rita.product_management.core.gateway.EmailGateway;
@@ -22,9 +21,10 @@ public class SendTokenUseCase implements UnitUseCase<SendTokenCommand> {
     private final EmailGateway emailGateway;
 
     @Override
-    public void execute(SendTokenCommand command) throws JsonProcessingException {
+    public void execute(SendTokenCommand command) {
         User user = userGateway.findActiveUserByUsername(command.username());
         Token token = tokenGateway.generateToken(user.getId());
         emailGateway.sendToken(user.getEmail(), token.getToken());
     }
+
 }

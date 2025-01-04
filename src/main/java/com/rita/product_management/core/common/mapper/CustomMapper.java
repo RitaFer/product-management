@@ -2,8 +2,11 @@ package com.rita.product_management.core.common.mapper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +42,19 @@ public final class CustomMapper {
     public static BigDecimal parseStringToBigDecimal(String value) {
         log.debug("Parsing String value [{}] to BigDecimal", value);
         try {
-            value = value.substring(value.indexOf(SPACE) + ONE)
-                    .replace(DOT, EMPTY)
-                    .replace(COMMA, DOT);
-            log.debug("Formatted String value to parse: [{}]", value);
-            return parseDoubleToBigDecimal(Double.valueOf(value));
+            if (value.startsWith("R$")) {
+                value = value.replace("R$", "").trim();
+            }
+
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.of("pt", "BR"));
+            symbols.setDecimalSeparator(',');
+            symbols.setGroupingSeparator('.');
+            DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
+            decimalFormat.setParseBigDecimal(true);
+
+            BigDecimal parsedValue = (BigDecimal) decimalFormat.parse(value);
+            log.debug("Formatted String value to parse: [{}]", parsedValue);
+            return parsedValue.setScale(SCALE, RoundingMode.FLOOR);
         } catch (Exception e) {
             log.error("Error parsing String [{}] to BigDecimal. Returning BigDecimal.ZERO.", value, e);
             return BigDecimal.ZERO;

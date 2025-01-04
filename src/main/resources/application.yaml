@@ -4,8 +4,13 @@ server:
   port: 8080
   shutdown: graceful
 
+#TODO: move this for environment key
 email-server:
   key: 776ee04896f1b54148bf07acaef1d6c9
+
+#TODO: move this for environment key
+jwt:
+  secret: CzsRHbH7aXfMvdT9DbPPtSVSesvfFRUDQjMVjJBeeA0ps2qItTpZWMccQpUzmwl9ufz9sW6e-aw48WZnCo4GnQ
 
 spring:
   application:

@@ -19,6 +19,7 @@ com/rita/product_management/dataprovider/database/entity/UserEntity.class
 com/rita/product_management/entrypoint/api/dto/request/AuthRequest.class
 com/rita/product_management/core/common/util/FormatUtil.class
 com/rita/product_management/entrypoint/api/dto/response/AccountResponse.class
+com/rita/product_management/infrastructure/configuration/JacksonConfig.class
 com/rita/product_management/core/usecase/account/command/UpdateAccountCommand.class
 com/rita/product_management/core/common/util/RandomPasswordGenerator.class
 com/rita/product_management/dataprovider/database/repository/UserRepository.class

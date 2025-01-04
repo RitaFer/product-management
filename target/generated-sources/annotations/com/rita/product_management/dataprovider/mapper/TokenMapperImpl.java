@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-01-03T10:54:40-0400",
+    date = "2025-01-03T20:12:04-0400",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.5 (Amazon.com Inc.)"
 )
 @Component
@@ -19,13 +19,16 @@ public class TokenMapperImpl implements TokenMapper {
             return null;
         }
 
-        String userId = null;
+        Token.TokenBuilder token = Token.builder();
 
-        userId = tokenEntity.getUserId();
+        token.id( tokenEntity.getId() );
+        token.token( tokenEntity.getToken() );
+        token.userId( tokenEntity.getUserId() );
+        token.tokenUsed( tokenEntity.getTokenUsed() );
+        token.createdAt( tokenEntity.getCreatedAt() );
+        token.expiredAt( tokenEntity.getExpiredAt() );
 
-        Token token = new Token( userId );
-
-        return token;
+        return token.build();
     }
 
     @Override
@@ -36,7 +39,12 @@ public class TokenMapperImpl implements TokenMapper {
 
         TokenEntity.TokenEntityBuilder tokenEntity = TokenEntity.builder();
 
-        tokenEntity.token( map( token ) );
+        tokenEntity.id( token.getId() );
+        tokenEntity.token( token.getToken() );
+        tokenEntity.userId( token.getUserId() );
+        tokenEntity.tokenUsed( token.getTokenUsed() );
+        tokenEntity.createdAt( token.getCreatedAt() );
+        tokenEntity.expiredAt( token.getExpiredAt() );
 
         return tokenEntity.build();
     }

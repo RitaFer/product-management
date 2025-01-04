@@ -2,15 +2,17 @@ package com.rita.product_management.core.domain.user;
 
 import com.rita.product_management.core.common.util.RandomPasswordGenerator;
 import com.rita.product_management.core.domain.enums.UserType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.Random;
-
-import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Slf4j
@@ -45,6 +47,7 @@ public class User {
 
     public static String generateUsername(String name) {
         log.debug("Generating username for name: [{}]", name);
+        if (name.isEmpty()) throw new IllegalArgumentException("Name cannot be empty for username generation");
         String baseName = name.toLowerCase().replaceAll("\\s+", "");
         Random random = new Random();
         int randomNumber = 100 + random.nextInt(900);
@@ -83,4 +86,3 @@ public class User {
     }
 
 }
-
