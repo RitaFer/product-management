@@ -40,7 +40,7 @@ public class AccountControllerImpl implements AccountController {
     }
 
     @Override
-    public ResponseEntity<?> listAccount(Pageable pageable) {
+    public ResponseEntity<?> listAccounts(Pageable pageable) {
         Page<AccountsResponse> response = getAccountListUseCase.execute(new GetAccountListCommand(pageable));
         if (response.isEmpty()){
             return ResponseEntity.noContent().build();

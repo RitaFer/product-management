@@ -33,7 +33,7 @@ public class SwitchAccountUseCase implements UnitUseCase<SwitchAccountCommand> {
 
                 user.setActive(command.active());
                 userGateway.save(user);
-                log.debug("User status successfully updated to [{}]: [{}]", command.active(), user);
+                log.debug("User status successfully updated to [{}]: [{}]", command.active(), user.getId());
 
                 emailGateway.sendUpdateNotification(user.getEmail(), NOTIFICATION_MESSAGE + command.active());
                 log.debug("Status update notification email sent successfully to: [{}]", user.getEmail());

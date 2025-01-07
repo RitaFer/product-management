@@ -1,11 +1,11 @@
 package com.rita.product_management.entrypoint.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.rita.product_management.entrypoint.api.config.ErrorMessage;
 import com.rita.product_management.entrypoint.api.dto.request.CreateAccountRequest;
 import com.rita.product_management.entrypoint.api.dto.request.SwitchAccountRequest;
 import com.rita.product_management.entrypoint.api.dto.request.UpdateAccountRequest;
 import com.rita.product_management.entrypoint.api.dto.response.AccountResponse;
+import com.rita.product_management.entrypoint.api.dto.response.AccountsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,20 +28,20 @@ public interface AccountController {
         @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @ApiResponse(responseCode = "201", description = "Account created", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
         @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-        ResponseEntity<AccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request) throws JsonProcessingException;
+        ResponseEntity<AccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request);
 
         @Operation(summary = "Update an account")
         @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @ApiResponse(responseCode = "200", description = "Account updated", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
         @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-        ResponseEntity<AccountResponse> updateAccount(@RequestBody @Valid UpdateAccountRequest request) throws JsonProcessingException;
+        ResponseEntity<AccountResponse> updateAccount(@RequestBody @Valid UpdateAccountRequest request);
 
         @Operation(summary = "List of accounts")
         @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-        @ApiResponse(responseCode = "200", description = "List of accounts", content = @Content(schema = @Schema(implementation = AccountResponse.class)))
+        @ApiResponse(responseCode = "200", description = "List of accounts", content = @Content(schema = @Schema(implementation = AccountsResponse.class)))
         @ApiResponse(responseCode = "204", description = "List of accounts is empty", content = @Content(schema = @Schema()))
         @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-        ResponseEntity<?> listAccount(
+        ResponseEntity<?> listAccounts(
                 @Parameter(description = "Pageable parameters")
                 @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable);
 
@@ -49,12 +49,12 @@ public interface AccountController {
         @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
         @ApiResponse(responseCode = "200", description = "Account switched", content = @Content(schema = @Schema()))
         @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-        ResponseEntity<Void> switchAccount(@RequestBody @Valid SwitchAccountRequest request) throws JsonProcessingException;
+        ResponseEntity<Void> switchAccount(@RequestBody @Valid SwitchAccountRequest request);
 
         @Operation(summary = "Delete an account")
         @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
         @ApiResponse(responseCode = "200", description = "Account deleted", content = @Content(schema = @Schema()))
         @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorMessage.class)))
-        ResponseEntity<Void> deleteAccount(@RequestBody List<String> ids) throws JsonProcessingException;
+        ResponseEntity<Void> deleteAccount(@RequestBody List<String> ids);
 
 }
