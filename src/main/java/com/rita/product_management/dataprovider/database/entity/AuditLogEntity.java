@@ -24,8 +24,9 @@ public class AuditLogEntity {
     @Column(nullable = false)
     private ActionType action;
 
-    @Column(name = "modified_by", nullable = false)
-    private User modifiedBy;
+    @ManyToOne
+    @JoinColumn(name = "modified_by", nullable = false)
+    private UserEntity modifiedBy;
 
     @Column(name = "modified_date", nullable = false)
     private LocalDateTime modifiedDate;

@@ -29,6 +29,9 @@ spring:
       connection-timeout: 20000
 
   jpa:
+    entity:
+      scan:
+        packages: com.rita.product_management.dataprovider.database.entity
     hibernate:
       jdbc:
         time_zone: UTC

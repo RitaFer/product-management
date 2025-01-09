@@ -39,7 +39,8 @@ public class ProductEntity {
     @Column(nullable = false)
     private String sku;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private CategoryEntity category;
 
     @Column(name = "cost_value", nullable = false)
@@ -55,7 +56,8 @@ public class ProductEntity {
     private Long quantityInStock;
 
     @CreatedBy
-    @Column(name = "created_by", nullable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false, updatable = false)
     private UserEntity createdBy;
 
     @CreatedDate
@@ -63,7 +65,8 @@ public class ProductEntity {
     private LocalDateTime createdAt;
 
     @LastModifiedBy
-    @Column(name = "updated_by", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "updated_by", nullable = false)
     private UserEntity updatedBy;
 
     @LastModifiedDate

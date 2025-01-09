@@ -3,6 +3,7 @@ package com.rita.product_management.dataprovider.database.gateway.impl;
 import com.rita.product_management.core.common.exception.UserNotFoundException;
 import com.rita.product_management.core.domain.user.User;
 import com.rita.product_management.core.gateway.UserGateway;
+import com.rita.product_management.dataprovider.database.entity.UserEntity;
 import com.rita.product_management.dataprovider.database.repository.UserRepository;
 import com.rita.product_management.dataprovider.mapper.UserMapper;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,9 +37,15 @@ public class UserGatewayImpl implements UserGateway, UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> findByUsername(String username) {
+        return userRepository.findByUsernameAndIsActiveIsTrue(username);
+    }
+
+    @Override
     public User findActiveUserByUsername(String username) {
         log.debug("Searching for active user by username: [{}]", username);
-        return userRepository.findByUsernameAndActiveIsTrue(username)
+        return userRepository.findByUsernameAndIsActiveIsTrue(username)
                 .map(userMapper::fromEntityToModel)
                 .orElseThrow(() -> {
                     log.error("Active user with username [{}] not found.", username);

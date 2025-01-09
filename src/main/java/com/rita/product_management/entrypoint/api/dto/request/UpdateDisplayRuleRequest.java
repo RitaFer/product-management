@@ -5,10 +5,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record SwitchCategoryRequest(
-        @NotEmpty
-        List<String> ids,
-        @NotNull Boolean isActive
+public record UpdateDisplayRuleRequest(
+        @NotNull String id,
+        @NotNull @NotEmpty List<String> hiddenFields
 ) {
-
 }

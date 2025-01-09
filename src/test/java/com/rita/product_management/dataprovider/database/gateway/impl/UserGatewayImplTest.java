@@ -61,20 +61,20 @@ class UserGatewayImplTest {
         String username = "activeuser";
         User mockUser = new User();
         mockUser.setUsername(username);
-        when(userRepository.findByUsernameAndActiveIsTrue(username)).thenReturn(Optional.of(new com.rita.product_management.dataprovider.database.entity.UserEntity()));
+        when(userRepository.findByUsernameAndIsActiveIsTrue(username)).thenReturn(Optional.of(new com.rita.product_management.dataprovider.database.entity.UserEntity()));
         when(userMapper.fromEntityToModel(any())).thenReturn(mockUser);
         User user = userGateway.findActiveUserByUsername(username);
         assertNotNull(user);
         assertEquals(username, user.getUsername());
-        verify(userRepository, times(1)).findByUsernameAndActiveIsTrue(username);
+        verify(userRepository, times(1)).findByUsernameAndIsActiveIsTrue(username);
     }
 
     @Test
     void givenActiveUserDoesNotExistThenThrowException_WhenFindActiveUserByUsername() {
         String username = "inactiveuser";
-        when(userRepository.findByUsernameAndActiveIsTrue(username)).thenReturn(Optional.empty());
+        when(userRepository.findByUsernameAndIsActiveIsTrue(username)).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, () -> userGateway.findActiveUserByUsername(username));
-        verify(userRepository, times(1)).findByUsernameAndActiveIsTrue(username);
+        verify(userRepository, times(1)).findByUsernameAndIsActiveIsTrue(username);
     }
 
     @Test

@@ -36,7 +36,7 @@ class ApiExceptionHandlerTest {
     void givenBusinessExceptionThenThrowResponseWithBadRequestStatus() {
         String errorMessage = "Business logic error";
         BusinessException exception = new BusinessException(errorMessage);
-        ResponseEntity<ErrorMessage> response = apiExceptionHandler.handleUserNotFoundException(exception);
+        ResponseEntity<ErrorMessage> response = apiExceptionHandler.businessException(exception);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().status());
         assertEquals(errorMessage, response.getBody().message());

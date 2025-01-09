@@ -22,7 +22,7 @@ import java.util.Random;
 public class User {
 
     private String id;
-    private Boolean active;
+    private Boolean isActive;
     private String name;
     private String username;
     private String email;
@@ -34,7 +34,7 @@ public class User {
     public User(String name, String email, UserType role) {
         log.info("Creating User with name: [{}], email: [{}], and role: [{}]", name, email, role);
         this.name = name;
-        this.active = false;
+        this.isActive = false;
         this.username = generateUsername(name);
         this.email = email;
         this.password = generatePassword();

@@ -33,7 +33,7 @@ public class DataInitializer {
             });
 
             UserEntity admin = new UserEntity();
-            admin.setActive(true);
+            admin.setIsActive(true);
             admin.setName("First Admin User");
             admin.setUsername("admin");
             admin.setEmail("rialf.ferreira@gmail.com");
@@ -43,7 +43,7 @@ public class DataInitializer {
             log.info("Admin user created: {}", admin.getId());
 
             UserEntity stockist = new UserEntity();
-            stockist.setActive(true);
+            stockist.setIsActive(true);
             stockist.setName("First Stockist User");
             stockist.setUsername("stockist");
             stockist.setEmail("iwjkwoods@gmail.com");

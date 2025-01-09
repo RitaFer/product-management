@@ -25,8 +25,8 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
-    private Boolean active;
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
 
     @Column(nullable = false)
     private String name;

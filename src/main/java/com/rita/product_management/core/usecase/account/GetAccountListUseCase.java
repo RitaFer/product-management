@@ -37,7 +37,7 @@ public class GetAccountListUseCase implements UseCase<GetAccountListCommand, Pag
 
     private AccountsResponse mapToAccountsResponse(User account) {
         log.debug("Mapping User to AccountsResponse for userId: [{}]", account.getId());
-        return new AccountsResponse(account.getId(), account.getActive(), account.getName());
+        return new AccountsResponse(account.getId(), account.getIsActive(), account.getName());
     }
 
 }

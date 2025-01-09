@@ -31,7 +31,7 @@ public class SwitchAccountUseCase implements UnitUseCase<SwitchAccountCommand> {
                 User user = userGateway.findUserById(id);
                 log.debug("User found: [{}]", user);
 
-                user.setActive(command.active());
+                user.setIsActive(command.active());
                 userGateway.save(user);
                 log.debug("User status successfully updated to [{}]: [{}]", command.active(), user.getId());
 

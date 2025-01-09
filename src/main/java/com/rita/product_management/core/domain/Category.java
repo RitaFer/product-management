@@ -1,15 +1,14 @@
 package com.rita.product_management.core.domain;
 
 import com.rita.product_management.core.domain.enums.CategoryType;
+import com.rita.product_management.core.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Data
 @Slf4j
@@ -32,8 +31,6 @@ public class Category {
         this.isActive = false;
         this.active = active;
         this.type = type;
-        this.createdAt = Instant.now().atZone(ZoneOffset.UTC).toLocalDateTime();
-        this.updatedAt = createdAt;
         log.info("Category [{}] created successfully.", this.name);
     }
 

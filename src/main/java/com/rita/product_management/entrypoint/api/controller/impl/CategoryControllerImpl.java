@@ -53,7 +53,7 @@ public class CategoryControllerImpl  implements CategoryController {
 
     @Override
     public ResponseEntity<Void> switchCategory(SwitchCategoryRequest request) {
-        switchCategoryUseCase.execute(new SwitchCategoryCommand(request.ids(), request.active()));
+        switchCategoryUseCase.execute(new SwitchCategoryCommand(request.ids(), request.isActive()));
         return ResponseEntity.ok().build();
     }
 

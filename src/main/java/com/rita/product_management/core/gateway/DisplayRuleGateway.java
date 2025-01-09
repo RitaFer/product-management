@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface DisplayRuleGateway {
     DisplayRule save(final DisplayRule rule);
+    DisplayRule findDisplayRuleById(final String id);
     Page<DisplayRule> findAll(final Pageable pageable);
-    DisplayRule delete(final String id);
+    void delete(final String id);
 }
