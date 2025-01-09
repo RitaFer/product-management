@@ -43,7 +43,7 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
             log.debug("Update notification email sent successfully to: [{}]", updatedUser.getEmail());
 
             AccountResponse response = mapToAccountResponse(updatedUser);
-            log.debug("AccountResponse successfully created for user: [{}]", response);
+            log.info("AccountResponse successfully created for user: [{}]", response.id());
 
             return response;
 
@@ -83,6 +83,7 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
         log.debug("Mapping User to AccountResponse for user ID: [{}]", user.getId());
         return new AccountResponse(
                 user.getId(),
+                user.getUsername(),
                 user.getName(),
                 user.getEmail(),
                 user.getRole()

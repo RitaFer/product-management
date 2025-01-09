@@ -35,11 +35,11 @@ public class UpdateCategoryUseCase implements UseCase<UpdateCategoryCommand, Cat
             }
 
             Category updatedCategory = categoryGateway.save(category);
-            log.debug("Category successfully updated: [{}]", updatedCategory);
+            log.info("Category successfully updated: [{}]", updatedCategory);
 
 
             CategoryResponse response = mapToCategoryResponse(updatedCategory);
-            log.debug("CategoryResponse successfully created for category: [{}]", response);
+            log.info("CategoryResponse successfully created for category: [{}]", response.id());
 
             return response;
 
@@ -63,12 +63,12 @@ public class UpdateCategoryUseCase implements UseCase<UpdateCategoryCommand, Cat
 
         if (!category.getActive().equals(command.active())) {
             category.setActive(command.active());
-            result.addChange("email");
+            result.addChange("active");
         }
 
         if (!category.getType().equals(command.type())) {
             category.setType(command.type());
-            result.addChange("role");
+            result.addChange("type");
         }
 
         log.debug("Fields updated for category ID: [{}]: [{}]", category.getId(), result.getChangesDescription());

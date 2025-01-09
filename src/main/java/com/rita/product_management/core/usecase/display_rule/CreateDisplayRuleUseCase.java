@@ -27,7 +27,7 @@ public class CreateDisplayRuleUseCase implements UseCase<CreateDisplayRuleComman
             log.debug("DisplayRule created and saved successfully: [{}]", displayRule.getId());
 
             DisplayRuleResponse response = mapToDisplayRuleResponse(displayRule);
-            log.debug("DisplayRuleResponse successfully created for displayRule: [{}]", response);
+            log.info("DisplayRuleResponse successfully created for displayRule: [{}]", response.id());
 
             return response;
 

@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record SwitchCategoryRequest(
-        @NotEmpty
+        @NotEmpty(message = "cannot be empty")
+        @NotNull(message = "cannot be null")
         List<String> ids,
         @NotNull Boolean isActive
 ) {

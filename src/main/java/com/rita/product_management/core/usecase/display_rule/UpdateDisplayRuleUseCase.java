@@ -29,7 +29,7 @@ public class UpdateDisplayRuleUseCase implements UseCase<UpdateDisplayRuleComman
             displayRule.setHiddenFields(command.hiddenFields());
 
             DisplayRule updatedDisplayRule = displayRuleGateway.save(displayRule);
-            log.info("DisplayRule successfully updated: [{}]", updatedDisplayRule);
+            log.info("DisplayRule successfully updated: [{}]", updatedDisplayRule.getId());
 
             return mapToDisplayRuleResponse(updatedDisplayRule);
         }catch (Exception e) {

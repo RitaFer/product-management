@@ -2,8 +2,10 @@ package com.rita.product_management.core.gateway;
 
 import com.rita.product_management.core.domain.Token;
 
+import java.util.Optional;
+
 public interface TokenGateway {
     Token generateToken(String userId);
-    Boolean validateToken(String token);
+    Optional<Token> validateToken(String token);
     Token findToken(String token);
 }

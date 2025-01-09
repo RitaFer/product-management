@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record ChangePasswordCommand(
         @NotNull String token,
-        @NotNull String password1,
-        @NotNull String password2
+        @NotNull String newPassword,
+        @NotNull String confirmNewPassword
 ) {
 }

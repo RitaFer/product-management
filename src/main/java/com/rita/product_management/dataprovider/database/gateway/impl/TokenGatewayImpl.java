@@ -43,24 +43,12 @@ public class TokenGatewayImpl implements TokenGateway {
     }
 
     @Override
-    public Boolean validateToken(String code) {
+    public Optional<Token> validateToken(String code) {
         log.info("Validating token: [{}]", code);
 
-        Optional<Token> validToken = tokenRepository
+        return tokenRepository
                 .findByTokenAndTokenUsedFalseAndExpiredAtIsAfter(code, LocalDateTime.now())
                 .map(tokenMapper::fromEntityToModel);
-
-        if (validToken.isEmpty()) {
-            log.warn("Validation failed for token: [{}]. Token is either expired or already used.", code);
-            return false;
-        } else {
-            Token token = validToken.get();
-            token.setTokenUsed(true);
-            tokenRepository.save(tokenMapper.fromModelToEntity(token));
-            log.info("Token validated and marked as used: [{}]", code);
-
-            return token.getToken().equalsIgnoreCase(code);
-        }
     }
 
     @Override
@@ -84,7 +72,7 @@ public class TokenGatewayImpl implements TokenGateway {
                 .toList();
 
         if (!lastCodes.isEmpty()) {
-            LocalDateTime lastTokenTime = lastCodes.get(0).getCreatedAt();
+            LocalDateTime lastTokenTime = lastCodes.getFirst().getCreatedAt();
             boolean canGenerate = lastTokenTime.plusMinutes(1).isBefore(LocalDateTime.now());
 
             if (canGenerate) {

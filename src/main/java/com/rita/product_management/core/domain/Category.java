@@ -1,7 +1,6 @@
 package com.rita.product_management.core.domain;
 
 import com.rita.product_management.core.domain.enums.CategoryType;
-import com.rita.product_management.core.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,12 +25,12 @@ public class Category {
     private LocalDateTime updatedAt;
 
     public Category(String name, String active, CategoryType type) {
-        log.info("Creating Category with name: [{}], active: [{}], and type: [{}]", name, active, type);
+        log.debug("Creating Category with name: [{}], active: [{}], and type: [{}]", name, active, type);
         this.name = name;
         this.isActive = false;
         this.active = active;
         this.type = type;
-        log.info("Category [{}] created successfully.", this.name);
+        log.debug("Category [{}] created successfully.", this.name);
     }
 
 }

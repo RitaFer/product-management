@@ -4,9 +4,7 @@ import com.rita.product_management.core.domain.enums.CategoryType;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateCategoryRequest(
-        @NotNull String name,
-        @NotNull String active,
-        @NotNull CategoryType type
-) {
-
-}
+        @NotNull(message = "cannot be null") String name,
+        @NotNull(message = "cannot be null") String active,
+        @NotNull(message = "cannot be null") CategoryType type
+) {}

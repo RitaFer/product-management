@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DisplayRuleRepository extends JpaRepository<DisplayRuleEntity, String> {
+    boolean existsByIsActiveIsTrue();
 }

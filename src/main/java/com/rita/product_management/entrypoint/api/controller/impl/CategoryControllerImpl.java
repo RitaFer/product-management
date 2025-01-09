@@ -9,6 +9,7 @@ import com.rita.product_management.entrypoint.api.dto.request.SwitchCategoryRequ
 import com.rita.product_management.entrypoint.api.dto.request.UpdateCategoryRequest;
 import com.rita.product_management.entrypoint.api.dto.response.CategoriesResponse;
 import com.rita.product_management.entrypoint.api.dto.response.CategoryResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,20 +25,27 @@ public class CategoryControllerImpl  implements CategoryController {
 
     private final CreateCategoryUseCase createCategoryUseCase;
     private final UpdateCategoryUseCase updateCategoryUseCase;
+    private final GetCategoryUseCase getCategoryUseCase;
     private final GetCategoryListUseCase getCategoryListUseCase;
     private final SwitchCategoryUseCase switchCategoryUseCase;
     private final DeleteCategoryUseCase deleteCategoryUseCase;
 
 
     @Override
-    public ResponseEntity<CategoryResponse> createCategory(CreateCategoryRequest request) {
+    public ResponseEntity<CategoryResponse> createCategory(@Valid CreateCategoryRequest request) {
         CategoryResponse response = createCategoryUseCase.execute(new CreateCategoryCommand(request.name(), request.active(), request.type()));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Override
-    public ResponseEntity<CategoryResponse> updateCategory(UpdateCategoryRequest request) {
+    public ResponseEntity<CategoryResponse> updateCategory(@Valid UpdateCategoryRequest request) {
         CategoryResponse response = updateCategoryUseCase.execute(new UpdateCategoryCommand(request.id(), request.name(), request.active(), request.type()));
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<CategoryResponse> findCategory(String id) {
+        CategoryResponse response = getCategoryUseCase.execute(new GetCategoryCommand(id));
         return ResponseEntity.ok(response);
     }
 
@@ -52,7 +60,7 @@ public class CategoryControllerImpl  implements CategoryController {
     }
 
     @Override
-    public ResponseEntity<Void> switchCategory(SwitchCategoryRequest request) {
+    public ResponseEntity<Void> switchCategory(@Valid SwitchCategoryRequest request) {
         switchCategoryUseCase.execute(new SwitchCategoryCommand(request.ids(), request.isActive()));
         return ResponseEntity.ok().build();
     }

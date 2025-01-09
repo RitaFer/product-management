@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record CreateDisplayRuleRequest(
-        @NotNull @NotEmpty List<String> hiddenFields
+        @NotNull(message = "cannot be null")
+        @NotEmpty(message = "cannot be empty")
+        List<String> hiddenFields
 ) {
 }

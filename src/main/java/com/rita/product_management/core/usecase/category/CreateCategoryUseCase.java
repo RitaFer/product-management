@@ -31,7 +31,7 @@ public class CreateCategoryUseCase implements UseCase<CreateCategoryCommand, Cat
             log.debug("Category created and saved successfully: [{}]", category.getId());
 
             CategoryResponse response = mapToCategoryResponse(category);
-            log.debug("CategoryResponse successfully created for category: [{}]", response);
+            log.info("CategoryResponse successfully created for category: [{}]", response.id());
 
             return response;
 

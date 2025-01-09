@@ -21,36 +21,59 @@ public class DisplayRuleGatewayImpl implements DisplayRuleGateway {
 
     @Override
     public DisplayRule save(DisplayRule displayRule) {
-        log.debug("Saving displayRule: [{}]", displayRule);
-        DisplayRule savedDisplayRule = displayRuleMapper.fromEntityToModel(displayRuleRepository.save(displayRuleMapper.fromModelToEntity(displayRule)));
+        log.debug("Saving DisplayRule with details: [{}]", displayRule);
+        DisplayRule savedDisplayRule = displayRuleMapper.fromEntityToModel(
+                displayRuleRepository.save(displayRuleMapper.fromModelToEntity(displayRule))
+        );
         log.debug("DisplayRule saved successfully: [{}]", savedDisplayRule);
         return savedDisplayRule;
     }
 
     @Override
     public DisplayRule findDisplayRuleById(String id) {
-        log.debug("Searching for displayRule by id: [{}]", id);
-        return displayRuleRepository.findById(id)
-                .map(displayRuleMapper::fromEntityToModel)
-                .orElseThrow(() -> {
-                    log.error("DisplayRule with id [{}] not found.", id);
-                    return new DisplayRuleNotFoundException("DisplayRule with id = " + id + ", not found.");
-                });
+        log.debug("Searching for DisplayRule by ID: [{}]", id);
+        return findDisplayRuleOrThrow(id);
+    }
+
+    @Override
+    public Boolean existsAnotherActiveDisplayRule() {
+        log.debug("Checking if another active DisplayRule exists...");
+        boolean exists = displayRuleRepository.existsByIsActiveIsTrue();
+        log.info("Exists another active DisplayRule: [{}]", exists);
+        return exists;
     }
 
     @Override
     public Page<DisplayRule> findAll(Pageable pageable) {
-        log.debug("Fetching all displayRules with pagination: [{}]", pageable);
+        log.debug("Fetching all DisplayRules with pagination: [{}]", pageable);
         Page<DisplayRule> displayRules = displayRuleRepository.findAll(pageable).map(displayRuleMapper::fromEntityToModel);
-        log.debug("Fetched [{}] displayRules", displayRules.getTotalElements());
+        log.info("Fetched [{}] DisplayRules.", displayRules.getTotalElements());
         return displayRules;
     }
 
     @Override
     public void delete(String id) {
-        log.debug("Deleting displayRule: [{}]", id);
-        DisplayRule displayRule = findDisplayRuleById(id);
+        log.debug("Deleting DisplayRule with ID: [{}]", id);
+        DisplayRule displayRule = findDisplayRuleOrThrow(id);
         displayRuleRepository.delete(displayRuleMapper.fromModelToEntity(displayRule));
-        log.debug("DisplayRule deleted successfully: [{}]", displayRule);
+        log.debug("DisplayRule [{}] deleted successfully.", id);
+    }
+
+    private void validateId(String id) {
+        if (id == null || id.isBlank()) {
+            log.error("The display rule id cannot be null or empty.");
+            throw new IllegalArgumentException("The display rule id cannot be null or empty.");
+        }
+    }
+
+    private DisplayRule findDisplayRuleOrThrow(String id) {
+        validateId(id);
+        return displayRuleRepository.findById(id)
+                .map(displayRuleMapper::fromEntityToModel)
+                .orElseThrow(() -> {
+                    log.error("DisplayRule with ID [{}] not found.", id);
+                    return new DisplayRuleNotFoundException("DisplayRule with ID = " + id + " not found.");
+                });
     }
 }
+

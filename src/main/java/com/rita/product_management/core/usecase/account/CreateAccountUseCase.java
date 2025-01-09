@@ -36,7 +36,7 @@ public class CreateAccountUseCase implements UseCase<CreateAccountCommand, Accou
             log.debug("Create account notification email sent successfully to: [{}]", user.getEmail());
 
             AccountResponse response = mapToAccountResponse(user);
-            log.debug("AccountResponse successfully created for user: [{}]", response);
+            log.info("AccountResponse successfully created for user: [{}]", response.id());
 
             return response;
 
@@ -50,6 +50,7 @@ public class CreateAccountUseCase implements UseCase<CreateAccountCommand, Accou
         log.debug("Mapping User to AccountResponse for userId: [{}]", user.getId());
         return new AccountResponse(
                 user.getId(),
+                user.getUsername(),
                 user.getName(),
                 user.getEmail(),
                 user.getRole()

@@ -6,9 +6,13 @@ server:
 
 email-server:
   key: ${EMAIL_SERVER_KEY:qCLRkXnAUkP_oaKhdMfdoDeX3Q3muat75c-vJwYrsHpCsQsPzYtPl9WuBBli-NXPbW7BqJ2nukifuEnq10Nh8Q}
+  url: https://send.api.mailtrap.io/api/send
+  from-email: hello@demomailtrap.com
+  from-name: Mailtrap Test
 
 jwt:
   secret: ${JWT_SECRET:776ee04896f1b54148bf07acaef1d6c9}
+  expiration: 3600
 
 spring:
   application:
@@ -49,7 +53,7 @@ spring:
     time-zone: UTC
 
 springdoc:
-  show-actuator: true
+  show-actuator: false
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
@@ -60,5 +64,8 @@ springdoc:
   default-consumes-media-type: application/json
 
 logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    com.rita: ${LOG_LEVEL:DEBUG}
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) %magenta([%t]) %m%n"

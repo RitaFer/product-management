@@ -8,6 +8,7 @@ import com.rita.product_management.entrypoint.api.dto.request.SwitchDisplayRuleR
 import com.rita.product_management.entrypoint.api.dto.request.UpdateDisplayRuleRequest;
 import com.rita.product_management.entrypoint.api.dto.response.DisplayRuleResponse;
 import com.rita.product_management.entrypoint.api.dto.response.DisplayRulesResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,20 +24,27 @@ public class DisplayRuleControllerImpl implements DisplayRuleController {
 
     private final CreateDisplayRuleUseCase createDisplayRuleUseCase;
     private final UpdateDisplayRuleUseCase updateDisplayRuleUseCase;
+    private final GetDisplayRuleUseCase getDisplayRuleUseCase;
     private final GetDisplayRuleListUseCase getDisplayRuleListUseCase;
     private final SwitchDisplayRuleUseCase switchDisplayRuleUseCase;
     private final DeleteDisplayRuleUseCase deleteDisplayRuleUseCase;
 
 
     @Override
-    public ResponseEntity<DisplayRuleResponse> createDisplayRule(CreateDisplayRuleRequest request) {
+    public ResponseEntity<DisplayRuleResponse> createDisplayRule(@Valid CreateDisplayRuleRequest request) {
         DisplayRuleResponse response = createDisplayRuleUseCase.execute(new CreateDisplayRuleCommand(request.hiddenFields()));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Override
-    public ResponseEntity<DisplayRuleResponse> updateDisplayRule(UpdateDisplayRuleRequest request) {
+    public ResponseEntity<DisplayRuleResponse> updateDisplayRule(@Valid UpdateDisplayRuleRequest request) {
         DisplayRuleResponse response = updateDisplayRuleUseCase.execute(new UpdateDisplayRuleCommand(request.id(), request.hiddenFields()));
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<DisplayRuleResponse> findDisplayRule(String id) {
+        DisplayRuleResponse response = getDisplayRuleUseCase.execute(new GetDisplayRuleCommand(id));
         return ResponseEntity.ok(response);
     }
 
@@ -51,7 +59,7 @@ public class DisplayRuleControllerImpl implements DisplayRuleController {
     }
 
     @Override
-    public ResponseEntity<Void> switchDisplayRule(SwitchDisplayRuleRequest request) {
+    public ResponseEntity<Void> switchDisplayRule(@Valid SwitchDisplayRuleRequest request) {
         switchDisplayRuleUseCase.execute(new SwitchDisplayRuleCommand(request.id(), request.isActive()));
         return ResponseEntity.ok().build();
     }
@@ -61,4 +69,5 @@ public class DisplayRuleControllerImpl implements DisplayRuleController {
         deleteDisplayRuleUseCase.execute(new DeleteDisplayRuleCommand(ids));
         return ResponseEntity.ok().build();
     }
+
 }

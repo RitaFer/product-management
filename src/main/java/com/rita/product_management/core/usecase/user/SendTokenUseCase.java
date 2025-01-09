@@ -8,9 +8,11 @@ import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UnitUseCase;
 import com.rita.product_management.core.usecase.user.command.SendTokenCommand;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+@Slf4j
 @Component
 @Validated
 @AllArgsConstructor
@@ -22,9 +24,18 @@ public class SendTokenUseCase implements UnitUseCase<SendTokenCommand> {
 
     @Override
     public void execute(SendTokenCommand command) {
-        User user = userGateway.findActiveUserByUsername(command.username());
-        Token token = tokenGateway.generateToken(user.getId());
-        emailGateway.sendToken(user.getEmail(), token.getToken());
+        log.info("Starting token generation for username: {}", command.username());
+
+        try {
+            User user = userGateway.findActiveUserByUsername(command.username());
+            Token token = tokenGateway.generateToken(user.getId());
+            emailGateway.sendToken(user.getEmail(), token.getToken());
+
+            log.info("Token sent successfully to email: {}", user.getEmail());
+        } catch (Exception e) {
+            log.error("Failed to send token to username: {}", command.username(), e);
+            throw new RuntimeException("Failed to send token to user: " + command.username(), e);
+        }
     }
 
 }

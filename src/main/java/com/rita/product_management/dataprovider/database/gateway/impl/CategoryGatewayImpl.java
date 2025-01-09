@@ -21,36 +21,48 @@ public class CategoryGatewayImpl implements CategoryGateway {
 
     @Override
     public Category save(Category category) {
-        log.debug("Saving category: [{}]", category);
-        Category savedCategory = categoryMapper.fromEntityToModel(categoryRepository.save(categoryMapper.fromModelToEntity(category)));
-        log.debug("Category saved successfully: [{}]", savedCategory);
+        log.info("Saving category with details: [{}]", category);
+        Category savedCategory = categoryMapper.fromEntityToModel(
+                categoryRepository.save(categoryMapper.fromModelToEntity(category))
+        );
+        log.info("Category saved successfully with ID: [{}]", savedCategory.getId());
         return savedCategory;
     }
 
     @Override
     public Category findCategoryById(String id) {
-        log.debug("Searching for category by id: [{}]", id);
-        return categoryRepository.findById(id)
-                .map(categoryMapper::fromEntityToModel)
-                .orElseThrow(() -> {
-                    log.error("Category with id [{}] not found.", id);
-                    return new CategoryNotFoundException("Category with id = " + id + ", not found.");
-                });
+        log.debug("Searching for category by ID: [{}]", id);
+        return findCategoryOrThrow(id);
     }
 
     @Override
     public Page<Category> findAll(Pageable pageable) {
-        log.debug("Fetching all categorys with pagination: [{}]", pageable);
-        Page<Category> categorys = categoryRepository.findAll(pageable).map(categoryMapper::fromEntityToModel);
-        log.debug("Fetched [{}] categorys", categorys.getTotalElements());
-        return categorys;
+        log.debug("Fetching all categories with pagination: [{}]", pageable);
+        Page<Category> categories = categoryRepository.findAll(pageable).map(categoryMapper::fromEntityToModel);
+        log.info("Fetched [{}] Categories.", categories.getTotalElements());
+        return categories;
     }
 
     @Override
     public void delete(String id) {
-        log.debug("Deleting category: [{}]", id);
-        Category category = findCategoryById(id);
+        log.info("Deleting category with ID: [{}]", id);
+        Category category = findCategoryOrThrow(id);
         categoryRepository.delete(categoryMapper.fromModelToEntity(category));
-        log.debug("Category deleted successfully: [{}]", category);
+        log.info("Category [{}] deleted successfully.", id);
     }
+
+    private void validateId(String id) {
+        if (id == null || id.isBlank()) {
+            log.error("The category ID cannot be null or empty.");
+            throw new IllegalArgumentException("The category ID cannot be null or empty.");
+        }
+    }
+
+    private Category findCategoryOrThrow(String id) {
+        validateId(id);
+        return categoryRepository.findById(id)
+                .map(categoryMapper::fromEntityToModel)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
+    }
+
 }
