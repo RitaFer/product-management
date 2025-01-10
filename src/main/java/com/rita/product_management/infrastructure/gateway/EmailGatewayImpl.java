@@ -2,7 +2,7 @@ package com.rita.product_management.infrastructure.gateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.EmailGateway;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

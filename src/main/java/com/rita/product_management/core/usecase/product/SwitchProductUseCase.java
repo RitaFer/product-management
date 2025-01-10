@@ -3,7 +3,7 @@ package com.rita.product_management.core.usecase.product;
 import com.rita.product_management.core.domain.AuditLog;
 import com.rita.product_management.core.domain.Product;
 import com.rita.product_management.core.domain.enums.ActionType;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.AuditLogGateway;
 import com.rita.product_management.core.gateway.ProductGateway;
 import com.rita.product_management.core.gateway.UserGateway;

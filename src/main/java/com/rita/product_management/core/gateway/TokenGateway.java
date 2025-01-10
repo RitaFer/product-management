@@ -5,7 +5,8 @@ import com.rita.product_management.core.domain.Token;
 import java.util.Optional;
 
 public interface TokenGateway {
+
     Token generateToken(String userId);
     Optional<Token> validateToken(String token);
-    Token findToken(String token);
+
 }

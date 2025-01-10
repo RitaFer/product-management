@@ -198,7 +198,6 @@ public interface ProductController {
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Filters to apply when generating the report",
-                    required = false,
                     content = @Content(
                             schema = @Schema(implementation = ProductFilter.class),
                             examples = @ExampleObject(value =
@@ -283,7 +282,6 @@ public interface ProductController {
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Filters to apply when generating the report",
-                    required = false,
                     content = @Content(
                             schema = @Schema(implementation = ProductFilter.class),
                             examples = @ExampleObject(value =
@@ -380,7 +378,6 @@ public interface ProductController {
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Filters to apply when generating the report",
-                    required = false,
                     content = @Content(
                             schema = @Schema(implementation = ProductFilter.class),
                             examples = @ExampleObject(value =

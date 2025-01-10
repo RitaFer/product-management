@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rita.product_management.core.domain.Category;
 import com.rita.product_management.core.domain.Product;
 import com.rita.product_management.core.domain.enums.UserType;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.DisplayRuleGateway;
 import com.rita.product_management.core.gateway.ProductGateway;
 import com.rita.product_management.core.gateway.UserGateway;

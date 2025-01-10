@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
@@ -14,7 +13,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "categories")
-@EntityListeners(AuditingEntityListener.class)
 public class CategoryEntity {
 
     @Id

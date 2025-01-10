@@ -1,7 +1,5 @@
 package com.rita.product_management.core.domain;
 
-import com.rita.product_management.core.domain.user.User;
-import com.rita.product_management.dataprovider.database.entity.CategoryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

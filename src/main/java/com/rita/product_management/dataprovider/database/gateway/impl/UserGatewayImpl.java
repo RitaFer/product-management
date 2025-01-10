@@ -2,7 +2,7 @@ package com.rita.product_management.dataprovider.database.gateway.impl;
 
 import com.rita.product_management.core.common.exception.BusinessException;
 import com.rita.product_management.core.common.exception.UserNotFoundException;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.dataprovider.database.entity.UserEntity;
 import com.rita.product_management.dataprovider.database.repository.UserRepository;

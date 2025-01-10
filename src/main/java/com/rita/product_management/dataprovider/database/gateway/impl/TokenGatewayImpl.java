@@ -9,7 +9,6 @@ import com.rita.product_management.dataprovider.mapper.TokenMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,18 +48,6 @@ public class TokenGatewayImpl implements TokenGateway {
         return tokenRepository
                 .findByTokenAndTokenUsedFalseAndExpiredAtIsAfter(code, LocalDateTime.now())
                 .map(tokenMapper::fromEntityToModel);
-    }
-
-    @Override
-    public Token findToken(String token) {
-        log.info("Searching for token: [{}]", token);
-
-        return tokenRepository.findByToken(token)
-                .map(tokenMapper::fromEntityToModel)
-                .orElseThrow(() -> {
-                    log.error("Token not found: [{}]", token);
-                    return new NotFoundException("Token not found");
-                });
     }
 
     private boolean canGenerateNewToken(String userId) {

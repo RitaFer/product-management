@@ -40,7 +40,7 @@ spring:
       jdbc:
         time_zone: UTC
       ddl-auto: update
-    show-sql: false
+    show-sql: ${SHOW_SQL:true}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect

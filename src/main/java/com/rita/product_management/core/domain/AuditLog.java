@@ -1,7 +1,6 @@
 package com.rita.product_management.core.domain;
 
 import com.rita.product_management.core.domain.enums.ActionType;
-import com.rita.product_management.core.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

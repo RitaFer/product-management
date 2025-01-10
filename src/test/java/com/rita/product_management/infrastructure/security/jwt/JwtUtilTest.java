@@ -1,7 +1,7 @@
 package com.rita.product_management.infrastructure.security.jwt;
 
 import com.rita.product_management.core.domain.enums.UserType;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.entrypoint.api.dto.response.AuthResponse;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;

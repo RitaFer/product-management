@@ -3,9 +3,7 @@ package com.rita.product_management.core.usecase.product;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rita.product_management.core.domain.Product;
 import com.rita.product_management.core.domain.enums.FileType;
-import com.rita.product_management.core.gateway.DisplayRuleGateway;
 import com.rita.product_management.core.gateway.ProductGateway;
-import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UnitUseCase;
 import com.rita.product_management.core.usecase.product.command.GetProductReportFileCommand;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,9 +31,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GenerateReportUseCase implements UnitUseCase<GetProductReportFileCommand> {
 
-    private final UserGateway userGateway;
     private final ProductGateway productGateway;
-    private final DisplayRuleGateway displayRuleGateway;
 
     @Override
     public void execute(GetProductReportFileCommand command) {

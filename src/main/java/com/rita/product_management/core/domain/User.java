@@ -1,4 +1,4 @@
-package com.rita.product_management.core.domain.user;
+package com.rita.product_management.core.domain;
 
 import com.rita.product_management.core.common.util.RandomPasswordGenerator;
 import com.rita.product_management.core.domain.enums.UserType;

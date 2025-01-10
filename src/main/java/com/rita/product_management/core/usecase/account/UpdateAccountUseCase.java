@@ -1,7 +1,7 @@
 package com.rita.product_management.core.usecase.account;
 
 import com.rita.product_management.core.common.exception.NoChangesException;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.EmailGateway;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UseCase;

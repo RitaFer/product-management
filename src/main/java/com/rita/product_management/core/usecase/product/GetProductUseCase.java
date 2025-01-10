@@ -2,7 +2,7 @@ package com.rita.product_management.core.usecase.product;
 
 import com.rita.product_management.core.domain.Category;
 import com.rita.product_management.core.domain.Product;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.ProductGateway;
 import com.rita.product_management.core.usecase.UseCase;
 import com.rita.product_management.core.usecase.product.command.GetProductCommand;

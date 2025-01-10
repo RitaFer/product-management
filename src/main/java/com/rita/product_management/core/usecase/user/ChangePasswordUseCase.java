@@ -2,7 +2,7 @@ package com.rita.product_management.core.usecase.user;
 
 import com.rita.product_management.core.common.exception.InvalidTokenException;
 import com.rita.product_management.core.domain.Token;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.TokenGateway;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UnitUseCase;

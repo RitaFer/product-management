@@ -1,7 +1,7 @@
 package com.rita.product_management.dataprovider.database.gateway.impl;
 
 import com.rita.product_management.core.common.exception.UserNotFoundException;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.dataprovider.database.repository.UserRepository;
 import com.rita.product_management.dataprovider.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;

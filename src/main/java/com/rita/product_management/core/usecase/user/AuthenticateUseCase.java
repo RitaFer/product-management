@@ -1,7 +1,7 @@
 package com.rita.product_management.core.usecase.user;
 
 import com.rita.product_management.core.common.exception.AuthenticationFailedException;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.usecase.UseCase;
 import com.rita.product_management.core.usecase.user.command.AuthCommand;
 import com.rita.product_management.core.gateway.UserGateway;

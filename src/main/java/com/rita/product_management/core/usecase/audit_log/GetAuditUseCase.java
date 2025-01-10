@@ -1,7 +1,7 @@
 package com.rita.product_management.core.usecase.audit_log;
 
 import com.rita.product_management.core.domain.AuditLog;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.AuditLogGateway;
 import com.rita.product_management.core.usecase.UseCase;
 import com.rita.product_management.core.usecase.audit_log.command.GetAuditLogCommand;
