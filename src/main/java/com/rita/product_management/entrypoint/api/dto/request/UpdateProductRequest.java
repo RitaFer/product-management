@@ -1,6 +1,5 @@
 package com.rita.product_management.entrypoint.api.dto.request;
 
-import com.rita.product_management.core.domain.enums.UserType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;

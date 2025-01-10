@@ -42,7 +42,7 @@ public class DisplayRuleGatewayImpl implements DisplayRuleGateway {
     @Override
     public List<String> getHiddenFieldsForRole(UserType role) {
         DisplayRuleEntity rule = displayRuleRepository
-                .findByRole(role.name())
+                .findByRoleAndIsActiveIsTrue(role)
                 .orElseThrow(() ->
                 new DisplayRuleNotFoundException("DisplayRule with role = " + role + " not found."));
         return rule.getHiddenFields();

@@ -62,7 +62,7 @@ public class CategoryGatewayImpl implements CategoryGateway {
         validateId(id);
         return categoryRepository.findById(id)
                 .map(categoryMapper::fromEntityToModel)
-                .orElseThrow(() -> new CategoryNotFoundException(id));
+                .orElseThrow(() -> new CategoryNotFoundException("Category with id = " + id + ", not found."));
     }
 
 }

@@ -19,15 +19,15 @@ public class AuditLogSpecification extends BaseSpecification<AuditLogEntity, Aud
         return (root, query, cb) -> {
             modifiedByJoin = root.join(Field.modifiedBy.name(), JoinType.LEFT);
 
-            return Specification.where(attributeEquals(AuditLogSpecification.Field.id.name(), filter.id()))
-                    .and(attributeEquals(Field.action.name(), filter.action()))
-                    .and(attributeEquals(Field.entityName.name(), filter.entityName()))
-                    .and(attributeEquals(Field.entityId.name(), filter.entityId()))
-                    .and(attributeEquals(Field.field.name(), filter.field()))
-                    .and(attributeEquals(Field.oldValue.name(), filter.oldValue()))
-                    .and(attributeEquals(Field.newValue.name(), filter.newValue()))
-                    .and(attributeEquals(modifiedByJoin, AuditLogSpecification.Field.id.name(), filter.modifiedBy()))
-                    .and(attributeBetweenDates(Field.modifiedDate.name(), filter.modifiedDatInitial(), filter.modifiedDateFinal()))
+            return Specification.where(attributeEquals(AuditLogSpecification.Field.id.name(), filter.getId()))
+                    .and(attributeEquals(Field.action.name(), filter.getAction()))
+                    .and(attributeContains(Field.entityName.name(), filter.getEntityName()))
+                    .and(attributeEquals(Field.entityId.name(), filter.getEntityId()))
+                    .and(attributeEquals(Field.field.name(), filter.getField()))
+                    .and(attributeEquals(Field.oldValue.name(), filter.getOldValue()))
+                    .and(attributeEquals(Field.newValue.name(), filter.getNewValue()))
+                    .and(attributeEquals(modifiedByJoin, AuditLogSpecification.Field.id.name(), filter.getModifiedBy()))
+                    .and(attributeBetweenDates(Field.modifiedDate.name(), filter.getModifiedDateInitial(), filter.getModifiedDateFinal()))
                     .toPredicate(root, query, cb);
         };
     }

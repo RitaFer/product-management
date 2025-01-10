@@ -31,9 +31,10 @@ public class ChangePasswordUseCase implements UnitUseCase<ChangePasswordCommand>
             Token token = validateToken(command.token());
             log.debug("Token validated successfully for user ID: {}", token.getUserId());
 
-            User user = userGateway.findActiveUserByUsername(token.getUserId());
+            User user = userGateway.findActiveUserById(token.getUserId());
 
             updatePassword(user, command.newPassword());
+            invalidateToken(token);
 
             log.info("Password updated successfully for user ID: {}", user.getId());
         } catch (Exception e) {
@@ -56,6 +57,11 @@ public class ChangePasswordUseCase implements UnitUseCase<ChangePasswordCommand>
     private void updatePassword(User user, String newPassword) {
         user.setPassword(newPassword);
         userGateway.save(user);
+    }
+
+    private void invalidateToken(Token token) {
+        token.setTokenUsed(true);
+        tokenGateway.save(token);
     }
 
 }

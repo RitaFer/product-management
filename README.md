@@ -1,108 +1,142 @@
-# Projeto de API para Gerenciamento de Produtos 📦
+# Product Management API Project 📦
 
-Este projeto é uma **API Rest para Gerenciamento de Produtos** cujo objetivo principal é permitir operações CRUD em produtos, além de oferecer funcionalidades avançadas como filtragem, paginação, relatórios e controle de acesso por usuários. 
+This project is a **REST API for Product Management** designed to handle CRUD operations for products, alongside advanced features such as filtering, pagination, reporting, and user access control.
 
-### 🚀 Tecnologias Utilizadas
+### 🚀 Technologies Used
 
 - Java 21
 - Spring Boot 3.4.0
 - MySQL
 - Docker
 - Swagger (OpenAPI)
-- Envio de Email (MailTrap)
-- JWT para Autenticação
-- Heroku (Deploy em Produção)
+- Email Sending (MailTrap)
+- JWT for Authentication
+- Heroku (Production Deployment)
 
-### 🛠️ Funcionalidades
+### 🛠️ Features
 
-1. **CRUD de Produtos**: Adicionar, visualizar, editar e excluir produtos.
-2. **CRUD de Usuários**: Adicionar, visualizar, editar e excluir contas.
-3. **Listagem Avançada**: Paginação, Ordenação/Filtros múltiplos.
-4. **Controle de Acesso**: Dois níveis: Administrador e Estoquista.
-5. **Auditoria**: Registro de alterações nos produtos com histórico detalhado.
-6. **Relatórios**: Geração de relatórios em **CSV** ou **XLSX**.
-7. **Resumo Financeiro**: Cálculo de custos e valores de venda de produtos.
-8. **Documentação**: API documentada com Swagger.
-9. **Teste Unitários**: Cobertura para funcionalidades críticas.
-    
-### 🚨 Observações Importantes
+1. **Product CRUD**: Add, view, edit, and delete products.
+2. **User CRUD**: Add, view, edit, and delete user accounts.
+3. **Advanced Listing**: Pagination, sorting, and multiple filters.
+4. **Access Control**: Two levels: Administrator and Stockist.
+5. **Auditing**: Track product changes with detailed history.
+6. **Reports**: Generate reports in **CSV** or **XLSX** format.
+7. **Financial Summary**: Calculate product costs and sales values.
+8. **Documentation**: Fully documented API using Swagger.
+9. **Unit Testing**: Coverage for critical functionalities.
 
-- Foi realizado uma integração com o serviço de e-mail para que seja enviado atualizações do sistema, todavia, a versão gratuita do MailTrap só permite que seja enviado para o meu e-mail pessoal, assim, é um pouco dificil de comprovar essa funcionalizade para testadores externos. 
+### 🚨 Important Notes
+
+- The system integrates with an email service to send system updates. However, the free version of MailTrap only allows emails to be sent to my personal email. This makes it challenging for external testers to validate this feature.
 
 ---
 
-### 🐳 Como Rodar Localmente com Docker
+### 🐳 How to Run Locally with Docker
 
-1. Certifique-se de ter o **Docker** instalado em sua máquina.
-2. Clone este repositório:
+1. Ensure **Docker** is installed on your machine.
+2. Clone this repository:
    ```bash
-   git clone https://github.com/seu-repositorio/projeto-api-gerenciamento-produtos.git
+   git clone https://github.com/your-repo/product-management-api.git
    ```
-3. Acesse o diretório do projeto:
+3. Navigate to the project directory:
    ```bash
-   cd projeto-api-gerenciamento-produtos
+   cd product-management-api
    ```
-4. Suba o ambiente com Docker Compose:
+4. Start the environment with Docker Compose:
    ```bash
    docker-compose up
    ```
-   Isso irá:
-   - Inicializar o **MySQL**.
-   - Subir a aplicação na porta `8080`.
+   This will:
+   - Initialize **MySQL**.
+   - Launch the application on port `8080`.
 
-5. Acesse a aplicação:
+5. Access the application:
    - **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ---
 
-### 🌐 Acesso ao Deploy em Produção
+### 🌐 Production Deployment Access
 
-O projeto também está hospedado no **Heroku**. Você pode acessá-lo no link:
+The project is also hosted on **Heroku**. You can access it via the link below:
 
-👉 **[Link Heroku](https://rita-product-management-763d144bcf95.herokuapp.com/api/v1/swagger-ui/index.html?urls.primaryName=public)**
+👉 **[Heroku Link](https://rita-product-management-763d144bcf95.herokuapp.com/api/v1/swagger-ui/index.html?urls.primaryName=public)**
 
 ---
 
-### 🧪 Testes
+### 🧪 Testing
 
-Para rodar os testes de funcionalidades utilize o primeiro usuário criado de cada tipo:
+To run the functionality tests, use the first created user of each type:
 
 ```bash
 ADMIN: {
-  "username" : "admin",
-  "password" : "Admin@123"
+  "username": "admin",
+  "password": "Admin@123"
 }
 
-ESTOQUISTA: {
-  "username" : "stockist",
-  "password" : "Stockist@123"
+STOCKIST: {
+  "username": "stockist",
+  "password": "Stockist@123"
 }
 ```
 
 ---
 
-### 🔧 Requisitos para Configuração Manual
+### 🔧 Manual Configuration Requirements
 
-Caso não queira usar Docker, você pode configurar o ambiente manualmente:
+If you prefer not to use Docker, you can manually set up the environment:
 
-1. **Banco de Dados**:
-   - Instale o MySQL.
-   - Crie um banco de dados chamado `products-management`.
-   - Execute o script SQL disponível no repositório (`scripts/schema.sql`).
+1. **Database**:
+   - Install MySQL.
+   - Create a database named `products-management`.
+   - Execute the SQL script available in the repository (`scripts/schema.sql`).
 
-2. **Configuração do Projeto**:
-   - Atualize o arquivo `application.properties` com as credenciais do banco.
+2. **Project Configuration**:
+   - Update the `application.properties` file with your database credentials.
 
-3. **Rodando o Projeto**:
-   - Compile o projeto:
+3. **Running the Project**:
+   - Compile the project:
      ```bash
      ./mvnw clean install
      ```
-   - Inicie a aplicação:
+   - Start the application:
      ```bash
      ./mvnw spring-boot:run
      ```
 
-### ✨ Desenvolvido por Rita Ferreira 💻
+### Improvements for the Project
 
-Tempo de desenvolvimento contabilizado pelo app [WakaTime](https://wakatime.com/@018bed01-1668-43dc-aef1-b064cc5ec137/projects/cmhnjibeay?start=2024-12-29&end=2025-01-04) integrado à IDEA Intellij.
+1. **Implement Annotations for Auditing**:  
+   Use annotations like `@CreatedBy`, `@CreatedDate`, `@LastModifiedBy`, and `@LastModifiedDate` to automate the tracking of entity metadata.
+
+2. **Restrict Product Creation to Admin**:  
+   Ensure that only administrators can add new products, as stockists should not have permission to modify certain fields.
+
+3. **Access Rule Enforcement for Stockists**:  
+   Guarantee restricted access for stockists to limited data fields in the report endpoint.
+
+4. **User Name Limitation per LGPD**:  
+   Limit the exposure of user names to comply with LGPD (Brazilian General Data Protection Law) regulations.
+
+5. **Handle Jackson Time Serialization/Deserialization Issues**:  
+   Resolve serialization and deserialization issues caused by `JacksonTime`.
+
+6. **Simplify GetProductListUseCase Logic**:  
+   After resolving the `JacksonTime` issue, remove the need for mapping the `Product` object in the customizable method within the `GetProductListUseCase` class.
+
+7. **Fix Dependency Vulnerabilities**:  
+   Address four reported vulnerabilities in project dependencies to improve security.
+
+8. **Expand Unit Test Coverage**:  
+   Add more unit tests beyond the primary scope of the project to ensure better coverage and reliability.
+
+9. **Implement Containerized Tests**:  
+   Use container-based environments for testing (e.g., using Docker) to better replicate production setups.
+
+10. **Add Controller Tests**:  
+    Write and implement tests for all controller endpoints to ensure the correctness of API behavior.
+
+These enhancements will improve the robustness, security, and maintainability of the project while aligning it with best practices.
+
+### ✨ Developed by Rita Ferreira 💻
+
+Development time tracked using the [WakaTime](https://wakatime.com/@018bed01-1668-43dc-aef1-b064cc5ec137/projects/cmhnjibeay?start=2024-12-29&end=2025-01-04) app integrated with IntelliJ IDEA.

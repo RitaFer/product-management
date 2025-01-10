@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @Component
@@ -22,7 +23,7 @@ public class SwitchAccountUseCase implements UnitUseCase<SwitchAccountCommand> {
 
     @Override
     public void execute(SwitchAccountCommand command) {
-        log.info("Executing SwitchAccountUseCase for user IDs: [{}], active status: [{}]", command.ids(), command.active());
+        log.info("Executing SwitchAccountUseCase for user IDs: [{}], active status: [{}]", command.ids(), command.isActive());
 
         for (String id : command.ids()) {
             try {
@@ -31,14 +32,14 @@ public class SwitchAccountUseCase implements UnitUseCase<SwitchAccountCommand> {
                 User user = userGateway.findUserById(id);
                 log.debug("User found: [{}]", user);
 
-                user.setIsActive(command.active());
+                user.setIsActive(command.isActive());
                 userGateway.save(user);
-                log.debug("User status successfully updated to [{}]: [{}]", command.active(), user.getId());
+                log.debug("User status successfully updated to [{}]: [{}]", command.isActive(), user.getId());
 
-                emailGateway.sendUpdateNotification(user.getEmail(), NOTIFICATION_MESSAGE + command.active());
+                emailGateway.sendUpdateNotification(user.getEmail(), NOTIFICATION_MESSAGE + command.isActive());
                 log.debug("Status update notification email sent successfully to: [{}]", user.getEmail());
 
-            } catch (Exception e) {
+            } catch (HttpClientErrorException e) {
                 log.error("Unexpected error occurred during status update for user ID: [{}]", id, e);
             }
         }

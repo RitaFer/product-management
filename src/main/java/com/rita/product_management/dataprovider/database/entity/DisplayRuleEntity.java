@@ -24,11 +24,13 @@ public class DisplayRuleEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "hidden_fields", nullable = false)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "hidden_fields", joinColumns = @JoinColumn(name = "display_rule_id"))
+    @Column(name = "field_name")
     private List<String> hiddenFields;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserType role = UserType.STOCKIST;
+    private UserType role;
 
 }

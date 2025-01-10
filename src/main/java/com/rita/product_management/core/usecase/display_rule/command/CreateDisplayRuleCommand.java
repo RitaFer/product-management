@@ -1,6 +1,5 @@
 package com.rita.product_management.core.usecase.display_rule.command;
 
-import com.rita.product_management.core.domain.enums.CategoryType;
 import com.rita.product_management.core.usecase.Command;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

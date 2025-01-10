@@ -34,10 +34,10 @@ public class AuditLogEntity {
     @Column()
     private String field;
 
-    @Column(name = "old_value")
+    @Column(name = "old_value", length = 2000)
     private String oldValue;
 
-    @Column(name = "new_value")
+    @Column(name = "new_value", length = 2000)
     private String newValue;
 
     @ManyToOne

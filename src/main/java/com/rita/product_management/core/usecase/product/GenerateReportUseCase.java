@@ -1,27 +1,28 @@
 package com.rita.product_management.core.usecase.product;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rita.product_management.core.common.exception.BusinessException;
 import com.rita.product_management.core.domain.Product;
+import com.rita.product_management.core.domain.ProductReportFile;
 import com.rita.product_management.core.domain.enums.FileType;
 import com.rita.product_management.core.gateway.ProductGateway;
-import com.rita.product_management.core.usecase.UnitUseCase;
+import com.rita.product_management.core.usecase.UseCase;
 import com.rita.product_management.core.usecase.product.command.GetProductReportFileCommand;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,84 +30,56 @@ import java.util.stream.Collectors;
 @Component
 @Validated
 @AllArgsConstructor
-public class GenerateReportUseCase implements UnitUseCase<GetProductReportFileCommand> {
+public class GenerateReportUseCase implements UseCase<GetProductReportFileCommand, ResponseEntity<byte[]>> {
 
     private final ProductGateway productGateway;
 
     @Override
-    public void execute(GetProductReportFileCommand command) {
+    public ResponseEntity<byte[]> execute(GetProductReportFileCommand command) {
         log.info("Executing...");
 
         try {
-            Page<List<Map<String, Object>>> products = productGateway.findAllWithFilters(command.pageable(), command.filter())
-                    .map(product -> applySelectedFieldsToList(transformProductToObjectList(product), command.fields()));
+            Page<ProductReportFile> products = productGateway.findAllWithFilters(command.pageable(), command.filter()).map(this::mapProduct);
 
             log.info("Successfully fetched [{}] products.", products.getTotalElements());
 
-            try {
-                if (command.format() == FileType.CSV) {
-                    generateCsvReport(products, command.fields(), command.servletResponse());
-                } else if (command.format() == FileType.XLSX) {
-                    generateXlsxReport(products, command.fields(), command.servletResponse());
-                } else {
-                    throw new IllegalArgumentException("Invalid report format: " + command.format());
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Error generating report", e);
-            }
+            byte[] fileContent;
+            String filename = generateDynamicFilename(command.format());
 
+            if (command.format() == FileType.CSV) {
+                fileContent = generateCsvReport(products, command.fields());
+                return createResponseEntity(fileContent, filename, MediaType.TEXT_PLAIN);
+            } else if (command.format() == FileType.XLSX) {
+                fileContent = generateXlsxReport(products, command.fields());
+                return createResponseEntity(fileContent, filename, MediaType.APPLICATION_OCTET_STREAM);
+            } else {
+                throw new BusinessException("Invalid report format: " + command.format());
+            }
         } catch (Exception e) {
             log.error("Error occurred while fetching product list with pagination: [{}]", command.pageable(), e);
-            throw new RuntimeException("Failed to execute GetProductListUseCase", e);
+            throw new RuntimeException("Failed to execute GenerateReportUseCase", e);
         }
     }
 
-    private List<Map<String, Object>> applySelectedFieldsToList(List<?> objects, List<String> selectedFields) {
-        ObjectMapper mapper = new ObjectMapper();
-        return objects.stream()
-                .map(object -> {
-                    Map<String, Object> objectMap = mapper.convertValue(object, Map.class);
-                    return objectMap.entrySet().stream()
-                            .filter(entry -> selectedFields.contains(entry.getKey()))
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                })
-                .toList();
+    private byte[] generateCsvReport(Page<ProductReportFile> data, List<String> fields) {
+        StringBuilder csvBuilder = new StringBuilder();
+        csvBuilder.append(String.join(",", fields)).append("\n");
+
+        data.getContent().forEach(product -> {
+            String line = fields.stream()
+                    .map(field -> Optional.ofNullable(product.getFieldValue(field)).map(Object::toString).orElse(""))
+                    .collect(Collectors.joining(","));
+            csvBuilder.append(line).append("\n");
+        });
+
+        return csvBuilder.toString().getBytes();
     }
 
+    private byte[] generateXlsxReport(Page<ProductReportFile> data, List<String> fields) throws IOException {
+        try (Workbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
-    public List<Map<String, Object>> transformProductToObjectList(Product product) {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> productMap = mapper.convertValue(product, Map.class);
-
-        return productMap.entrySet().stream()
-                .map(entry -> Map.of("field", entry.getKey(), "value", entry.getValue()))
-                .toList();
-    }
-
-    private void generateCsvReport(Page<List<Map<String, Object>>> data, List<String> fields, HttpServletResponse response) throws IOException {
-        response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=products.csv");
-
-        try (PrintWriter writer = response.getWriter()) {
-            writer.println(String.join(",", fields));
-
-            for (List<Map<String, Object>> productRows : data.getContent()) {
-                for (Map<String, Object> product : productRows) {
-                    String line = fields.stream()
-                            .map(field -> Optional.ofNullable(product.get(field)).map(Object::toString).orElse(""))
-                            .collect(Collectors.joining(","));
-                    writer.println(line);
-                }
-            }
-        }
-    }
-
-    private void generateXlsxReport(Page<List<Map<String, Object>>> data, List<String> fields, HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=products.xlsx");
-
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Products");
+            Sheet sheet = workbook.createSheet("products");
 
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < fields.size(); i++) {
@@ -115,23 +88,56 @@ public class GenerateReportUseCase implements UnitUseCase<GetProductReportFileCo
             }
 
             int rowIndex = 1;
-
-            for (List<Map<String, Object>> productRows : data.getContent()) {
-                for (Map<String, Object> product : productRows) {
-                    Row dataRow = sheet.createRow(rowIndex++);
-
-                    for (int j = 0; j < fields.size(); j++) {
-                        Cell cell = dataRow.createCell(j);
-                        Object value = product.get(fields.get(j));
-                        if (value != null) {
-                            cell.setCellValue(value.toString());
-                        }
+            for (ProductReportFile product : data.getContent()) {
+                Row dataRow = sheet.createRow(rowIndex++);
+                for (int j = 0; j < fields.size(); j++) {
+                    Cell cell = dataRow.createCell(j);
+                    Object value = product.getFieldValue(fields.get(j));
+                    if (value != null) {
+                        cell.setCellValue(value.toString());
                     }
                 }
             }
 
-            workbook.write(response.getOutputStream());
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
         }
     }
 
+    private ResponseEntity<byte[]> createResponseEntity(byte[] fileContent, String filename, MediaType mediaType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+        headers.setContentDispositionFormData("attachment", filename);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileContent);
+    }
+
+    private String generateDynamicFilename(FileType fileType) {
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String extension = fileType == FileType.CSV ? "csv" : "xlsx";
+        return String.format("products-%s.%s", date, extension);
+    }
+
+    private ProductReportFile mapProduct(Product product) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        return new ProductReportFile(
+                product.getId(),
+                product.getIsActive(),
+                product.getName(),
+                product.getActive(),
+                product.getSku(),
+                product.getCategory().getName(),
+                product.getCostValue(),
+                product.getIcms(),
+                product.getSaleValue(),
+                product.getQuantityInStock(),
+                product.getCreatedBy().getName(),
+                product.getCreatedAt().format(formatter),
+                product.getUpdatedBy().getName(),
+                product.getUpdatedAt().format(formatter)
+        );
+    }
 }

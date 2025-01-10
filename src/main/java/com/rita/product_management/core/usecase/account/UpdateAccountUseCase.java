@@ -24,11 +24,10 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
     @Override
     public AccountResponse execute(UpdateAccountCommand command) {
         log.info("Executing UpdateAccountUseCase for user ID: [{}]", command.id());
+        User user = userGateway.findUserById(command.id());
+        log.debug("User found: [{}]", user);
 
         try {
-            User user = userGateway.findUserById(command.id());
-            log.debug("User found: [{}]", user);
-
             UpdateResult updateResult = updateUserFields(user, command);
 
             if (!updateResult.hasChanges()) {
@@ -46,7 +45,6 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
             log.info("AccountResponse successfully created for user: [{}]", response.id());
 
             return response;
-
         } catch (NoChangesException e) {
             log.warn("No changes detected for user ID: [{}]. Message: [{}]", command.id(), e.getMessage());
             throw e;
@@ -109,9 +107,6 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
         }
 
         public String getChangesDescription() {
-            if (hasChanges) {
-                changesDescription.setLength(changesDescription.length() - 2);
-            }
             return changesDescription.toString();
         }
     }

@@ -59,7 +59,7 @@ public class AccountControllerImpl implements AccountController {
 
     @Override
     public ResponseEntity<Void> switchAccount(@Valid SwitchAccountRequest request) {
-        switchAccountUseCase.execute(new SwitchAccountCommand(request.ids(), request.active()));
+        switchAccountUseCase.execute(new SwitchAccountCommand(request.ids(), request.isActive()));
         return ResponseEntity.ok().build();
     }
 

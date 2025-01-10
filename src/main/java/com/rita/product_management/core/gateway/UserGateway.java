@@ -9,6 +9,7 @@ public interface UserGateway {
     User findUserByUsername(final String username);
     User findActiveUserByUsername(final String username);
     User findUserById(final String id);
+    User findActiveUserById(final String id);
     Page<User> findAll(final Pageable pageable);
     User save(final User user);
     void delete(final User user);

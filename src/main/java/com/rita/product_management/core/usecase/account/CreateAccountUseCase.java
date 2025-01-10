@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @Component
@@ -40,7 +41,7 @@ public class CreateAccountUseCase implements UseCase<CreateAccountCommand, Accou
 
             return response;
 
-        } catch (Exception e) {
+        } catch (HttpClientErrorException e) {
             log.error("Unexpected error occurred during account creation for email: [{}]", command.email(), e);
             throw new RuntimeException("Failed to execute CreateAccountUseCase", e);
         }

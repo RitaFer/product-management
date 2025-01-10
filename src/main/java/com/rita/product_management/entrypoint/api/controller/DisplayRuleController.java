@@ -1,5 +1,6 @@
 package com.rita.product_management.entrypoint.api.controller;
 
+import com.rita.product_management.entrypoint.api.config.ErrorMessage;
 import com.rita.product_management.entrypoint.api.dto.request.*;
 import com.rita.product_management.entrypoint.api.dto.response.DisplayRuleResponse;
 import com.rita.product_management.entrypoint.api.dto.response.DisplayRulesResponse;
@@ -20,11 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequestMapping(path = "/rules")
 @Tag(name = "Display Rules API", description = "Endpoints for display rules management")
-@RequestMapping(path = "/rules", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public interface DisplayRuleController {
 
-    @PostMapping()
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Create New Rule",
             responses = {
@@ -55,7 +56,7 @@ public interface DisplayRuleController {
     )
     ResponseEntity<DisplayRuleResponse> createDisplayRule(@RequestBody @Valid CreateDisplayRuleRequest request);
 
-    @PutMapping()
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Update Rule",
             responses = {
@@ -69,7 +70,14 @@ public interface DisplayRuleController {
                                                     "\"id\": \"283894f9-1610-49f5-815b-63f3efafb253\", " +
                                                     "\"hiddenFields\": [\"name\", \"active\"] }"
                                     )
-                            ))
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Rule not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"DisplayRule with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
+                            )),
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Display Rule Request",
@@ -88,7 +96,7 @@ public interface DisplayRuleController {
     )
     ResponseEntity<DisplayRuleResponse> updateDisplayRule(@RequestBody @Valid UpdateDisplayRuleRequest request);
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Find DisplayRule",
             parameters = {
@@ -110,12 +118,19 @@ public interface DisplayRuleController {
                                                     "\"id\": \"283894f9-1610-49f5-815b-63f3efafb253\", " +
                                                     "\"hiddenFields\": [\"name\", \"active\"] }"
                                     )
-                            ))
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Rule not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"DisplayRule with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
+                            )),
             }
     )
     ResponseEntity<DisplayRuleResponse> findDisplayRule(@PathVariable("id") String id);
 
-    @GetMapping()
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "List of rules",
             parameters = {
@@ -131,7 +146,7 @@ public interface DisplayRuleController {
                     ),
                     @Parameter(
                             name = "sort",
-                            description = "Sorting criteria in the format: property(,asc | desc). Default is name,asc",
+                            description = "Sorting criteria in the format: property(,asc | desc). Default is id,asc",
                             example = "name,asc"
                     )
             },
@@ -157,11 +172,29 @@ public interface DisplayRuleController {
                     )
             }
     )
-    ResponseEntity<?> listCategories(
+    ResponseEntity<?> listDisplayRules(
             @Parameter(hidden = true)
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable);
 
-    @PatchMapping()
+    @GetMapping(path = "/fields", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "List of Fields",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "List of Fields",
+                            content = @Content(
+                                    schema = @Schema(implementation = List.class),
+                                    examples = @ExampleObject(value =
+                                            "[ \"name\", \"active\" ]"
+                                    )
+                            )
+                    )
+            }
+    )
+    ResponseEntity<List<String>> listFields();
+
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Switch a rule",
             responses = {
@@ -170,6 +203,20 @@ public interface DisplayRuleController {
                             description = "Display Rule Switched",
                             content = @Content(
                                     schema = @Schema()
+                            )),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Business Exception",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"400\", \"message\": \"Cannot activate more than one DisplayRule at the same time.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Rule not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"DisplayRule with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -181,7 +228,7 @@ public interface DisplayRuleController {
                                     name = "Valid Request",
                                     summary = "Example of a valid request",
                                     value = "{ " +
-                                            "\"ids\": [\"12327b98-023a-4b33-9563-308684a61b3d\", \"0ae1e804-df33-47c6-bc2c-4b8671d96f88\"]" +
+                                            "\"id\": \"12327b98-023a-4b33-9563-308684a61b3d\", " +
                                             "\"isActive\": true }"
                             )
                     )
@@ -197,7 +244,7 @@ public interface DisplayRuleController {
                             name = "ids",
                             description = "List of ids for delete",
                             required = true,
-                            example =  "[\"12327b98-023a-4b33-9563-308684a61b3d\"]"
+                            example =  "\"12327b98-023a-4b33-9563-308684a61b3d\""
                     )
             },
             responses = {
@@ -206,9 +253,16 @@ public interface DisplayRuleController {
                             description = "Display Rules Deleted",
                             content = @Content(
                                     schema = @Schema()
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Rule not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"DisplayRule with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             }
     )
-    ResponseEntity<Void> deleteDisplayRule(@RequestBody List<String> ids);
+    ResponseEntity<Void> deleteDisplayRule(@RequestParam List<String> ids);
 
 }

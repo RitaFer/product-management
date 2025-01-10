@@ -23,6 +23,11 @@ public class TokenGatewayImpl implements TokenGateway {
     private final TokenMapper tokenMapper;
 
     @Override
+    public void save(Token token) {
+        tokenRepository.save(tokenMapper.fromModelToEntity(token));
+    }
+
+    @Override
     public Token generateToken(String userId) {
         log.info("Attempting to generate a new token for userId: [{}]", userId);
 
@@ -46,7 +51,7 @@ public class TokenGatewayImpl implements TokenGateway {
         log.info("Validating token: [{}]", code);
 
         return tokenRepository
-                .findByTokenAndTokenUsedFalseAndExpiredAtIsAfter(code, LocalDateTime.now())
+                .findByTokenAndTokenUsedFalseAndExpiredAtIsAfterAndTokenUsedIsFalse(code, LocalDateTime.now())
                 .map(tokenMapper::fromEntityToModel);
     }
 

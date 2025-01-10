@@ -9,6 +9,20 @@ import java.time.LocalDateTime;
 public abstract class BaseSpecification<T, P> {
     public abstract Specification<T> getFilter(P filter);
 
+    protected String containsLowerCase(String searchField) {
+        String wildcard = "%";
+        return wildcard + searchField.toLowerCase() + wildcard;
+    }
+
+    protected Specification<T> attributeContains(String attribute, String value) {
+        return (root, query, cb) -> {
+            if (value == null) {
+                return null;
+            }
+            return cb.like(cb.lower(root.get(attribute)), containsLowerCase(value));
+        };
+    }
+
     protected <R> Specification<T> attributeEquals(Join<?, ?> join, String attribute, R value) {
         return (root, query, cb) -> {
             if (value == null) {

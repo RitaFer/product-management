@@ -1,5 +1,6 @@
 package com.rita.product_management.entrypoint.api.controller;
 
+import com.rita.product_management.entrypoint.api.config.ErrorMessage;
 import com.rita.product_management.entrypoint.api.dto.request.*;
 import com.rita.product_management.entrypoint.api.dto.response.AccountResponse;
 import com.rita.product_management.entrypoint.api.dto.response.AccountsResponse;
@@ -20,11 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequestMapping(path = "/accounts")
 @Tag(name = "Accounts API", description = "Endpoints for accounts management")
-@RequestMapping(path = "/accounts", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public interface AccountController {
 
-        @PostMapping()
+        @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(
                 summary = "Create Account",
                 responses = {
@@ -41,6 +42,13 @@ public interface AccountController {
                                                         "\"email\": \"john@gmail.com\", " +
                                                         "\"role\": \"ADMIN\" }"
                                         )
+                                )),
+                        @ApiResponse(
+                                responseCode = "409",
+                                description = "Email in use",
+                                content = @Content(
+                                        schema = @Schema(implementation = ErrorMessage.class),
+                                        examples = @ExampleObject(value = "{ \"status\": \"409\", \"message\": \"The resource already exists.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                                 ))
                 },
                 requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -61,7 +69,7 @@ public interface AccountController {
         )
         ResponseEntity<AccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request);
 
-        @PutMapping()
+        @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(
                 summary = "Update Account",
                 responses = {
@@ -78,6 +86,20 @@ public interface AccountController {
                                                         "\"email\": \"john@gmail.com\", " +
                                                         "\"role\": \"ADMIN\" }"
                                         )
+                                )),
+                        @ApiResponse(
+                                responseCode = "404",
+                                description = "User not found",
+                                content = @Content(
+                                        schema = @Schema(implementation = ErrorMessage.class),
+                                        examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"User with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
+                                )),
+                        @ApiResponse(
+                                responseCode = "409",
+                                description = "Email in use",
+                                content = @Content(
+                                        schema = @Schema(implementation = ErrorMessage.class),
+                                        examples = @ExampleObject(value = "{ \"status\": \"409\", \"message\": \"The resource already exists.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                                 ))
                 },
                 requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -89,6 +111,7 @@ public interface AccountController {
                                         name = "Valid Request",
                                         summary = "Example of a valid request",
                                         value = "{ " +
+                                                "\"id\": \"283894f9-1610-49f5-815b-63f3efafb253\", " +
                                                 "\"name\": \"John Doe\", " +
                                                 "\"email\": \"john@gmail.com\", " +
                                                 "\"role\": \"ADMIN\" }"
@@ -98,7 +121,7 @@ public interface AccountController {
         )
         ResponseEntity<AccountResponse> updateAccount(@RequestBody @Valid UpdateAccountRequest request);
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Find Account",
             parameters = {
@@ -123,12 +146,19 @@ public interface AccountController {
                                                     "\"email\": \"john@gmail.com\", " +
                                                     "\"role\": \"ADMIN\" }"
                                     )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"User with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             }
     )
     ResponseEntity<AccountResponse> findAccount(@PathVariable("id") String id);
 
-    @GetMapping()
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(
                 summary = "List of Accounts",
                 parameters = {
@@ -158,7 +188,7 @@ public interface AccountController {
                                                 "{ " +
                                                         "\"id\": \"283894f9-1610-49f5-815b-63f3efafb253\", " +
                                                         "\"isActive\": true, " +
-                                                        "\"name\": \"Dorflex\" }"
+                                                        "\"name\": \"John Doe\" }"
                                         )
                                 )
                         ),
@@ -175,7 +205,7 @@ public interface AccountController {
                 @Parameter(hidden = true)
                 @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable);
 
-        @PatchMapping()
+        @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
         @Operation(
                 summary = "Switch Accounts",
                 responses = {
@@ -184,6 +214,13 @@ public interface AccountController {
                                 description = "Accounts Switched",
                                 content = @Content(
                                         schema = @Schema()
+                                )),
+                        @ApiResponse(
+                                responseCode = "404",
+                                description = "User not found",
+                                content = @Content(
+                                        schema = @Schema(implementation = ErrorMessage.class),
+                                        examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"User with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                                 ))
                 },
                 requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -195,7 +232,7 @@ public interface AccountController {
                                         name = "Valid Request",
                                         summary = "Example of a valid request",
                                         value = "{ " +
-                                                "\"ids\": [\"12327b98-023a-4b33-9563-308684a61b3d\", \"0ae1e804-df33-47c6-bc2c-4b8671d96f88\"]" +
+                                                "\"ids\": [\"12327b98-023a-4b33-9563-308684a61b3d\", \"0ae1e804-df33-47c6-bc2c-4b8671d96f88\"], " +
                                                 "\"isActive\": true }"
                                 )
                         )
@@ -211,7 +248,7 @@ public interface AccountController {
                                 name = "ids",
                                 description = "List of ids for delete",
                                 required = true,
-                                example =  "[\"12327b98-023a-4b33-9563-308684a61b3d\"]"
+                                example =  "\"12327b98-023a-4b33-9563-308684a61b3d\""
                         )
                 },
                 responses = {
@@ -220,9 +257,16 @@ public interface AccountController {
                                 description = "Accounts Deleted",
                                 content = @Content(
                                         schema = @Schema()
+                                )),
+                        @ApiResponse(
+                                responseCode = "404",
+                                description = "User not found",
+                                content = @Content(
+                                        schema = @Schema(implementation = ErrorMessage.class),
+                                        examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"User with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                                 ))
                 }
         )
-        ResponseEntity<Void> deleteAccount(@RequestBody List<String> ids);
+        ResponseEntity<Void> deleteAccount(@RequestParam List<String> ids);
 
 }

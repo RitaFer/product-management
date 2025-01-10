@@ -2,6 +2,7 @@ package com.rita.product_management.entrypoint.api.controller;
 
 
 import com.rita.product_management.core.domain.enums.FileType;
+import com.rita.product_management.entrypoint.api.config.ErrorMessage;
 import com.rita.product_management.entrypoint.api.dto.filters.ProductFilter;
 import com.rita.product_management.entrypoint.api.dto.request.CreateProductRequest;
 import com.rita.product_management.entrypoint.api.dto.request.SwitchProductRequest;
@@ -16,25 +17,23 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+@RequestMapping(path = "/products")
 @Tag(name = "Products API", description = "Endpoints for products management")
-@RequestMapping(path = "/products", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public interface ProductController {
 
-    @PostMapping()
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Create Product",
             responses = {
@@ -85,7 +84,7 @@ public interface ProductController {
     )
     ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid CreateProductRequest request);
 
-    @PutMapping()
+    @PutMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Update Product",
             responses = {
@@ -111,6 +110,13 @@ public interface ProductController {
                                                     "\"updatedAt\": \"2025-01-08T14:30:00\" " +
                                                     "}"
                                     )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Product with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -126,7 +132,7 @@ public interface ProductController {
                                             "\"name\": \"Dorflex\", " +
                                             "\"active\": \"Dipirona\", " +
                                             "\"sku\": \"DOR-123\", " +
-                                            "\"categoryId\": \"283894f9-1610-49f5-815b-63f3efafb253\"" +
+                                            "\"categoryId\": \"283894f9-1610-49f5-815b-63f3efafb253\", " +
                                             "\"costValue\": 10.50, " +
                                             "\"icms\": 18.0, " +
                                             "\"saleValue\": 15.75, " +
@@ -137,7 +143,7 @@ public interface ProductController {
     )
     ResponseEntity<ProductResponse> updateProduct(@RequestBody @Valid UpdateProductRequest request);
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Find Product",
             parameters = {
@@ -171,12 +177,19 @@ public interface ProductController {
                                                     "\"updatedAt\": \"2025-01-08T14:30:00\" " +
                                                     "}"
                                     )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Product with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             }
     )
     ResponseEntity<ProductResponse> findProduct(@PathVariable("id") String id);
 
-    @GetMapping()
+    @PostMapping(value = "/all", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "List of Products",
             parameters = {
@@ -260,7 +273,7 @@ public interface ProductController {
             @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
             @RequestBody(required = false) ProductFilter filter);
 
-    @GetMapping("/report")
+    @PostMapping(path = "/report", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Report of Products",
             parameters = {
@@ -340,10 +353,10 @@ public interface ProductController {
     )
     ResponseEntity<Page<ProductReportResponse>> getReport(
             @Parameter(hidden = true)
-            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+            @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
             @RequestBody(required = false) ProductFilter filter);
 
-    @GetMapping("/report/download")
+    @PostMapping(path = "/report/download")
     @Operation(
             summary = "Download Product Report",
             description = "Generates and downloads a product report file in the specified format (CSV or XLSX) with the selected fields and filters.",
@@ -421,16 +434,15 @@ public interface ProductController {
                     )
             }
     )
-    ResponseEntity<?> getReportFile(
+    ResponseEntity<byte[]> getReportFile(
             @Parameter(hidden = true)
             @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
             @RequestParam FileType format,
             @RequestParam List<String> fields,
-            @RequestBody(required = false) ProductFilter filter,
-            HttpServletResponse response);
+            @RequestBody(required = false) ProductFilter filter);
 
 
-    @PatchMapping()
+    @PatchMapping(consumes = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Switch Products",
             responses = {
@@ -439,6 +451,13 @@ public interface ProductController {
                             description = "Products Switched",
                             content = @Content(
                                     schema = @Schema()
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Product with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -475,10 +494,16 @@ public interface ProductController {
                             description = "Products Deleted",
                             content = @Content(
                                     schema = @Schema()
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Product with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             }
     )
-    ResponseEntity<Void> deleteProduct(@RequestParam @NotEmpty(message = "cannot be empty")
-                                        @NotNull(message = "cannot be null") List<String> ids);
+    ResponseEntity<Void> deleteProduct(@RequestParam List<String> ids);
 
 }

@@ -5,7 +5,7 @@ server:
   shutdown: graceful
 
 email-server:
-  key: ${EMAIL_SERVER_KEY:qCLRkXnAUkP_oaKhdMfdoDeX3Q3muat75c-vJwYrsHpCsQsPzYtPl9WuBBli-NXPbW7BqJ2nukifuEnq10Nh8Q}
+  key: ${EMAIL_SERVER_KEY:776ee04896f1b54148bf07acaef1d6c9}
   url: https://send.api.mailtrap.io/api/send
   from-email: hello@demomailtrap.com
   from-name: Mailtrap Test
@@ -15,6 +15,9 @@ jwt:
   expiration: 3600
 
 spring:
+  sql:
+    init:
+      mode: always
   application:
     name: Product Management API
     version: 1.0.0
@@ -33,17 +36,18 @@ spring:
       connection-timeout: 20000
 
   jpa:
+    open-in-view: false
     entity:
       scan:
         packages: com.rita.product_management.dataprovider.database.entity
     hibernate:
       jdbc:
         time_zone: UTC
-      ddl-auto: update
+      ddl-auto: ${DDL_AUTO:validate}
     show-sql: ${SHOW_SQL:true}
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  flyway:
+    locations: classpath:db.migration
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:Development}
@@ -67,5 +71,4 @@ logging:
   level:
     root: ${LOG_LEVEL:INFO}
     com.rita: ${LOG_LEVEL:DEBUG}
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) %magenta([%t]) %m%n"
+    org.flywaydb.core: DEBUG

@@ -17,21 +17,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class UserGatewayImpl implements UserGateway, UserDetailsService {
 
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     @Override
     public User findUserByUsername(String username) {
         validateInput(username, "Username cannot be null or empty.");
         log.debug("Searching for user by username: [{}]", username);
-        return findUser(() -> userRepository.findByUsername(username),
+        return findUser(userRepository.findByUsername(username),
                 "User with username = " + username + ", not found.");
     }
 
@@ -39,15 +38,23 @@ public class UserGatewayImpl implements UserGateway, UserDetailsService {
     public User findActiveUserByUsername(String username) {
         validateInput(username, "Username cannot be null or empty.");
         log.debug("Searching for active user by username: [{}]", username);
-        return findUser(() -> userRepository.findByUsernameAndIsActiveIsTrue(username),
+        return findUser(userRepository.findByUsernameAndIsActiveIsTrue(username),
                 "Active user with username = " + username + ", not found.");
+    }
+
+    @Override
+    public User findActiveUserById(String id) {
+        validateInput(id, "Username cannot be null or empty.");
+        log.debug("Searching for active user by id: [{}]", id);
+        return findUser(userRepository.findByIdAndIsActiveIsTrue(id),
+                "Active user with id = " + id + ", not found.");
     }
 
     @Override
     public User findUserById(String id) {
         validateInput(id, "User ID cannot be null or empty.");
         log.debug("Searching for user by id: [{}]", id);
-        return findUser(() -> userRepository.findById(id),
+        return findUser(userRepository.findById(id),
                 "User with id = " + id + ", not found.");
     }
 
@@ -90,9 +97,8 @@ public class UserGatewayImpl implements UserGateway, UserDetailsService {
         }
     }
 
-    private User findUser(Supplier<Optional<UserEntity>> userSupplier, String errorMessage) {
-        return userSupplier.get()
-                .map(userMapper::fromEntityToModel)
+    private User findUser(Optional<UserEntity> user, String errorMessage) {
+        return user.map(userMapper::fromEntityToModel)
                 .orElseThrow(() -> {
                     log.error(errorMessage);
                     return new UserNotFoundException(errorMessage);

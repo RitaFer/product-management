@@ -3,6 +3,7 @@ package com.rita.product_management.core.usecase.product;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rita.product_management.core.domain.Category;
 import com.rita.product_management.core.domain.Product;
+import com.rita.product_management.core.domain.ProductReportFile;
 import com.rita.product_management.core.domain.enums.UserType;
 import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.DisplayRuleGateway;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -44,12 +46,17 @@ public class GetProductListUseCase implements UseCase<GetProductListCommand, Pag
             Page<Product> products = productGateway.findAllWithFilters(command.pageable(), command.filter());
             Page<?> result;
 
-            if(role == UserType.ADMIN){
-                products.map(this::mapProductsToProductResponse);
-                result = products;
+            if(role.equals(UserType.ADMIN)){
+                result = products.map(this::mapProductsToProductResponse);
             } else {
                 List<String> hiddenFields = displayRuleGateway.getHiddenFieldsForRole(role);
-                result = products.map(product -> applyHiddenFieldsToList(transformProductToObjectList(product), hiddenFields));
+                result = products.map(this::mapProduct)
+                        .map(product -> {
+                            ObjectMapper mapper = new ObjectMapper();
+                            Map<String, Object> productMap = mapper.convertValue(product, Map.class);
+                            hiddenFields.forEach(productMap::remove);
+                            return productMap;
+                        });
             }
 
             log.info("Successfully fetched [{}] products.", result.getTotalElements());
@@ -91,26 +98,6 @@ public class GetProductListUseCase implements UseCase<GetProductListCommand, Pag
         );
     }
 
-    private List<Map<String, Object>> applyHiddenFieldsToList(List<?> objects, List<String> hiddenFields) {
-        ObjectMapper mapper = new ObjectMapper();
-        return objects.stream()
-                .map(object -> {
-                    Map<String, Object> objectMap = mapper.convertValue(object, Map.class);
-                    hiddenFields.forEach(objectMap::remove);
-                    return objectMap;
-                })
-                .toList();
-    }
-
-    public List<Map<String, Object>> transformProductToObjectList(Product product) {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> productMap = mapper.convertValue(product, Map.class);
-
-        return productMap.entrySet().stream()
-                .map(entry -> Map.of("field", entry.getKey(), "value", entry.getValue()))
-                .toList();
-    }
-
     private UserType getUserRole(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = null;
@@ -125,6 +112,27 @@ public class GetProductListUseCase implements UseCase<GetProductListCommand, Pag
         }
 
         return userGateway.findUserByUsername(username).getRole();
+    }
+
+    private ProductReportFile mapProduct(Product product) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        return new ProductReportFile(
+                product.getId(),
+                product.getIsActive(),
+                product.getName(),
+                product.getActive(),
+                product.getSku(),
+                product.getCategory().getName(),
+                product.getCostValue(),
+                product.getIcms(),
+                product.getSaleValue(),
+                product.getQuantityInStock(),
+                product.getCreatedBy().getName(),
+                product.getCreatedAt().format(formatter),
+                product.getUpdatedBy().getName(),
+                product.getUpdatedAt().format(formatter)
+        );
     }
 
 }

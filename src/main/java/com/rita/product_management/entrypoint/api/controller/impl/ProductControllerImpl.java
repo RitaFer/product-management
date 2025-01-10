@@ -10,7 +10,6 @@ import com.rita.product_management.entrypoint.api.dto.request.SwitchProductReque
 import com.rita.product_management.entrypoint.api.dto.request.UpdateProductRequest;
 import com.rita.product_management.entrypoint.api.dto.response.ProductReportResponse;
 import com.rita.product_management.entrypoint.api.dto.response.ProductResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +27,7 @@ public class ProductControllerImpl implements ProductController {
     private final CreateProductUseCase createProductUseCase;
     private final UpdateProductUseCase updateProductUseCase;
     private final GetProductUseCase getProductUseCase;
+    private final GenerateReportUseCase generateReportUseCase;
     private final GetProductReportUseCase getProductReportUseCase;
     private final GetProductListUseCase getProductListUseCase;
     private final SwitchProductUseCase switchProductUseCase;
@@ -72,8 +72,8 @@ public class ProductControllerImpl implements ProductController {
     }
 
     @Override
-    public ResponseEntity<?> getReportFile(Pageable pageable, FileType format, List<String> fields, ProductFilter filter, HttpServletResponse response) {
-        return null;
+    public ResponseEntity<byte[]> getReportFile(Pageable pageable, FileType format, List<String> fields, ProductFilter filter) {
+        return generateReportUseCase.execute(new GetProductReportFileCommand(pageable, filter, fields, format));
     }
 
     @Override

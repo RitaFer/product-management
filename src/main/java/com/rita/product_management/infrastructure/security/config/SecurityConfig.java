@@ -36,11 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/accounts/**").hasRole("ADMIN")
-                        .requestMatchers("/rules/**").hasRole("ADMIN")
-                        .requestMatchers("/audit/**").hasRole("ADMIN")
-                        .requestMatchers("/categories/**").hasRole("STOCKIST")
-                        .requestMatchers("/products/**").hasRole("STOCKIST")
+                        .requestMatchers("/accounts/**", "/rules/**", "/audit/**").hasRole("ADMIN")
+                        .requestMatchers("/categories/**", "/products/**").hasAnyRole("ADMIN", "STOCKIST")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

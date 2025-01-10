@@ -1,6 +1,7 @@
 package com.rita.product_management.core.usecase.display_rule;
 
 import com.rita.product_management.core.domain.DisplayRule;
+import com.rita.product_management.core.domain.enums.UserType;
 import com.rita.product_management.core.gateway.DisplayRuleGateway;
 import com.rita.product_management.core.usecase.UseCase;
 import com.rita.product_management.core.usecase.display_rule.command.CreateDisplayRuleCommand;
@@ -23,7 +24,7 @@ public class CreateDisplayRuleUseCase implements UseCase<CreateDisplayRuleComman
         log.info("Executing...");
 
         try {
-            DisplayRule displayRule = displayRuleGateway.save(DisplayRule.builder().isActive(false).hiddenFields(command.hiddenFields()).build());
+            DisplayRule displayRule = displayRuleGateway.save(DisplayRule.builder().isActive(false).hiddenFields(command.hiddenFields()).role(UserType.STOCKIST).build());
             log.debug("DisplayRule created and saved successfully: [{}]", displayRule.getId());
 
             DisplayRuleResponse response = mapToDisplayRuleResponse(displayRule);

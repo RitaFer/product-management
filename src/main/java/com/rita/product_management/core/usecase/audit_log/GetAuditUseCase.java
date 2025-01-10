@@ -23,15 +23,11 @@ public class GetAuditUseCase implements UseCase<GetAuditLogCommand, AuditLogResp
     @Override
     public AuditLogResponse execute(GetAuditLogCommand command) {
         log.info("Executing...");
-        try {
-            AuditLog audit = auditGateway.findById(command.id());
 
-            log.info("Successfully audit found - {}", audit.getId());
-            return mapAuditLogsToAuditLogResponse(audit);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching audit with id: [{}]", command.id(), e);
-            throw new RuntimeException("Failed to execute GetAuditUseCase", e);
-        }
+        AuditLog audit = auditGateway.findById(command.id());
+
+        log.info("Successfully audit found - {}", audit.getId());
+        return mapAuditLogsToAuditLogResponse(audit);
     }
 
     private AuditLogResponse mapAuditLogsToAuditLogResponse(AuditLog audit) {

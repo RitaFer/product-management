@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface TokenGateway {
 
+    void save(Token token);
     Token generateToken(String userId);
     Optional<Token> validateToken(String token);
 

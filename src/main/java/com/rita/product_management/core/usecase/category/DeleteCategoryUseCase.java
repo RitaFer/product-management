@@ -21,13 +21,9 @@ public class DeleteCategoryUseCase implements UnitUseCase<DeleteCategoryCommand>
         log.info("Executing DeleteCategoryUseCase for category IDs: [{}]", command.ids());
 
         for (String id : command.ids()) {
-            try {
-                log.debug("Processing deletion for category ID: [{}]", id);
-                categoryGateway.delete(id);
-                log.debug("Category successfully deleted: [{}]", id);
-            } catch (Exception e) {
-                log.error("Unexpected error occurred during account deletion for category ID: [{}]", id, e);
-            }
+            log.debug("Processing deletion for category ID: [{}]", id);
+            categoryGateway.delete(id);
+            log.debug("Category successfully deleted: [{}]", id);
         }
 
         log.info("DeleteCategoryUseCase executed successfully for category IDs: [{}]", command.ids());

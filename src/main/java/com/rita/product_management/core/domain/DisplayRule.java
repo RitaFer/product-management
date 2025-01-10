@@ -1,5 +1,6 @@
 package com.rita.product_management.core.domain;
 
+import com.rita.product_management.core.domain.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +19,6 @@ public class DisplayRule {
     private String id;
     private Boolean isActive;
     private List<String> hiddenFields;
+    private UserType role;
 
 }

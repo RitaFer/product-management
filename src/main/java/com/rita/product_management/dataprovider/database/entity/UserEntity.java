@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -51,5 +53,16 @@ public class UserEntity {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Transient
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @PrePersist
+    @PreUpdate
+    private void encryptPassword() {
+        if (this.password != null && !this.password.startsWith("$2a$")) {
+            this.password = passwordEncoder.encode(this.password);
+        }
+    }
 
 }

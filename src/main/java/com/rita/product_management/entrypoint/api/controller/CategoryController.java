@@ -1,5 +1,6 @@
 package com.rita.product_management.entrypoint.api.controller;
 
+import com.rita.product_management.entrypoint.api.config.ErrorMessage;
 import com.rita.product_management.entrypoint.api.dto.request.CreateCategoryRequest;
 import com.rita.product_management.entrypoint.api.dto.request.SwitchCategoryRequest;
 import com.rita.product_management.entrypoint.api.dto.request.UpdateCategoryRequest;
@@ -13,8 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -24,11 +23,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequestMapping(path = "/categories")
 @Tag(name = "Categories API", description = "Endpoints for categories management")
-@RequestMapping(path = "/categories", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public interface CategoryController {
 
-    @PostMapping()
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Create Category",
             responses = {
@@ -44,6 +43,13 @@ public interface CategoryController {
                                                     "\"active\": \"Dipirona\", " +
                                                     "\"type\": \"NORMAL\" }"
                                     )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Category not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Category with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -64,7 +70,7 @@ public interface CategoryController {
     )
     ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid CreateCategoryRequest request);
 
-    @PutMapping()
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Update Category",
             responses = {
@@ -80,6 +86,13 @@ public interface CategoryController {
                                                     "\"active\": \"Dipirona\", " +
                                                     "\"type\": \"NORMAL\" }"
                                     )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Category not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Category with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -101,7 +114,7 @@ public interface CategoryController {
     )
     ResponseEntity<CategoryResponse> updateCategory(@RequestBody @Valid UpdateCategoryRequest request);
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Find Category",
             parameters = {
@@ -125,12 +138,19 @@ public interface CategoryController {
                                                     "\"active\": \"Dipirona\", " +
                                                     "\"type\": \"NORMAL\" }"
                                     )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Category not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Category with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             }
     )
     ResponseEntity<CategoryResponse> findCategory(@PathVariable("id") String id);
 
-    @GetMapping()
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "List of Categories",
             parameters = {
@@ -179,7 +199,7 @@ public interface CategoryController {
             @Parameter(hidden = true)
             @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable);
 
-    @PatchMapping()
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Switch Categories",
             responses = {
@@ -188,6 +208,13 @@ public interface CategoryController {
                             description = "Categories Switched",
                             content = @Content(
                                     schema = @Schema()
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Category not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Category with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -199,7 +226,7 @@ public interface CategoryController {
                                     name = "Valid Request",
                                     summary = "Example of a valid request",
                                     value = "{ " +
-                                            "\"ids\": [\"12327b98-023a-4b33-9563-308684a61b3d\", \"0ae1e804-df33-47c6-bc2c-4b8671d96f88\"]" +
+                                            "\"ids\": [\"12327b98-023a-4b33-9563-308684a61b3d\", \"0ae1e804-df33-47c6-bc2c-4b8671d96f88\"], " +
                                             "\"isActive\": true }"
                             )
                     )
@@ -215,7 +242,7 @@ public interface CategoryController {
                             name = "ids",
                             description = "List of ids for delete",
                             required = true,
-                            example =  "[\"12327b98-023a-4b33-9563-308684a61b3d\"]"
+                            example =  "\"12327b98-023a-4b33-9563-308684a61b3d\""
                     )
             },
             responses = {
@@ -224,10 +251,16 @@ public interface CategoryController {
                             description = "Categories Deleted",
                             content = @Content(
                                     schema = @Schema()
-                            ))
+                            )),
+                    @ApiResponse(
+                        responseCode = "404",
+                        description = "Category not found",
+                        content = @Content(
+                            schema = @Schema(implementation = ErrorMessage.class),
+                            examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"Category with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
+                    ))
             }
     )
-    ResponseEntity<Void> deleteCategory(@RequestParam @NotEmpty(message = "cannot be empty")
-                                        @NotNull(message = "cannot be null") List<String> ids);
+    ResponseEntity<Void> deleteCategory(@RequestParam List<String> ids);
 
 }

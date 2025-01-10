@@ -21,13 +21,9 @@ public class DeleteDisplayRuleUseCase implements UnitUseCase<DeleteDisplayRuleCo
         log.info("Executing DeleteDisplayRuleUseCase for rules: [{}]", command.ids());
 
         for (String id : command.ids()) {
-            try {
-                log.debug("Processing deletion for rule ID: [{}]", id);
-                displayRuleGateway.delete(id);
-                log.debug("DisplayRule successfully deleted: [{}]", id);
-            } catch (Exception e) {
-                log.error("Unexpected error occurred during account deletion for rule ID: [{}]", id, e);
-            }
+            log.debug("Processing deletion for rule ID: [{}]", id);
+            displayRuleGateway.delete(id);
+            log.debug("DisplayRule successfully deleted: [{}]", id);
         }
 
         log.info("DeleteDisplayRuleUseCase executed successfully for rules: [{}]", command.ids());

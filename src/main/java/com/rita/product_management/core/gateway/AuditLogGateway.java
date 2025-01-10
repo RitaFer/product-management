@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface AuditLogGateway {
 
-    AuditLog save(final AuditLog auditLog);
+    void save(final AuditLog auditLog);
     AuditLog findById(final String id);
     Page<AuditLog> findAllWithFilters(final Pageable pageable, final AuditFilter filter);
 

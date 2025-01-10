@@ -1,5 +1,6 @@
 package com.rita.product_management.entrypoint.api.controller.impl;
 
+import com.rita.product_management.core.domain.Product;
 import com.rita.product_management.core.usecase.display_rule.*;
 import com.rita.product_management.core.usecase.display_rule.command.*;
 import com.rita.product_management.entrypoint.api.controller.DisplayRuleController;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -49,13 +52,22 @@ public class DisplayRuleControllerImpl implements DisplayRuleController {
     }
 
     @Override
-    public ResponseEntity<?> listCategories(Pageable pageable) {
+    public ResponseEntity<?> listDisplayRules(Pageable pageable) {
         Page<DisplayRulesResponse> response = getDisplayRuleListUseCase.execute(new GetDisplayRuleListCommand(pageable));
         if (response.isEmpty()){
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(response);
         }
+    }
+
+    @Override
+    public ResponseEntity<List<String>> listFields() {
+        List<String> fields = new java.util.ArrayList<>(Arrays.stream(Product.class.getDeclaredFields())
+                .map(Field::getName)
+                .toList());
+        fields.remove("log");
+        return ResponseEntity.ok(fields);
     }
 
     @Override

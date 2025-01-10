@@ -43,6 +43,9 @@ public class ProductGatewayImpl implements ProductGateway {
     @Override
     public Page<Product> findAllWithFilters(Pageable pageable, ProductFilter filter) {
         log.debug("Fetching all products with pagination: [{}]", pageable);
+        if(filter == null){
+            filter = new ProductFilter();
+        }
         Specification<ProductEntity> specification = productSpecification.getFilter(filter);
         Page<Product> products = productRepository.findAll(specification, pageable).map(productMapper::fromEntityToModel);
         log.debug("Fetched [{}] products.", products.getTotalElements());

@@ -49,7 +49,6 @@ public class ProductEntity {
     @Column(name = "quantity_in_stock", nullable = false)
     private Long quantityInStock;
 
-    //TODO: Implement @Annotations for this cases, for example @CreatedBy/@CreatedDate/@LastModifiedBy/@LastModifiedDate
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false, updatable = false)
     private UserEntity createdBy;

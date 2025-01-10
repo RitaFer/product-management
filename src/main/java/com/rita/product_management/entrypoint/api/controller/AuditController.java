@@ -1,5 +1,6 @@
 package com.rita.product_management.entrypoint.api.controller;
 
+import com.rita.product_management.entrypoint.api.config.ErrorMessage;
 import com.rita.product_management.entrypoint.api.dto.filters.AuditFilter;
 import com.rita.product_management.entrypoint.api.dto.response.AuditLogResponse;
 import com.rita.product_management.entrypoint.api.dto.response.AuditLogsResponse;
@@ -13,18 +14,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+@RequestMapping(path = "/logs")
 @Tag(name = "Audit API", description = "Endpoints for get audit logs")
-@RequestMapping(path = "/logs", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public interface AuditController {
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Find AuditLog",
             parameters = {
@@ -33,7 +32,7 @@ public interface AuditController {
                             description = "Search id",
                             required = true,
                             example = "12327b98-023a-4b33-9563-308684a61b3d"
-                    )
+                    ),
             },
             responses = {
                     @ApiResponse(
@@ -57,12 +56,19 @@ public interface AuditController {
                                                     "\"modifiedDate\": \"2025-01-10T15:30:00\" " +
                                                     "}"
                                     )
+                            )),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "AuditLog not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorMessage.class),
+                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"AuditLog with id = 99b5-69f7e8c4a3cc, not found.\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             }
     )
     ResponseEntity<AuditLogResponse> findAudit(@PathVariable("id") String id);
 
-    @GetMapping()
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(
             summary = "List of AuditLogs",
             parameters = {
@@ -78,13 +84,12 @@ public interface AuditController {
                     ),
                     @Parameter(
                             name = "sort",
-                            description = "Sorting criteria in the format: property(,asc | desc). Default is name,asc",
+                            description = "Sorting criteria in the format: property(,asc | desc). Default is id,asc",
                             example = "name,asc"
                     )
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Filters to apply when generating the report",
-                    required = false,
                     content = @Content(
                             schema = @Schema(implementation = AuditFilter.class),
                             examples = @ExampleObject(value =
@@ -132,6 +137,6 @@ public interface AuditController {
     )
     ResponseEntity<?> listAuditLogs(
             @Parameter(hidden = true)
-            @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
             @RequestBody(required = false) AuditFilter filter);
 }

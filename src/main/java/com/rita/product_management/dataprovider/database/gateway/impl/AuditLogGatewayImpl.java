@@ -25,25 +25,27 @@ public class AuditLogGatewayImpl implements AuditLogGateway {
     private final AuditLogSpecification auditLogSpecification;
 
     @Override
-    public AuditLog save(AuditLog auditLog) {
+    public void save(AuditLog auditLog) {
         log.debug("Saving audit with details: [{}]", auditLog);
         AuditLog savedAudit = auditLogMapper.fromEntityToModel(
                 auditLogRepository.save(auditLogMapper.fromModelToEntity(auditLog))
         );
         log.debug("Audit saved successfully with ID: [{}]", savedAudit.getId());
-        return savedAudit;
     }
 
     @Override
     public AuditLog findById(String id) {
         return auditLogRepository.findById(id)
                 .map(auditLogMapper::fromEntityToModel)
-                .orElseThrow(() -> new AuditNotFoundException(id));
+                .orElseThrow(() -> new AuditNotFoundException("AuditLog with id = "+id+", not found."));
     }
 
     @Override
     public Page<AuditLog> findAllWithFilters(Pageable pageable, AuditFilter filter) {
         log.debug("Fetching all audits with pagination: [{}]", pageable);
+        if(filter == null){
+            filter = new AuditFilter();
+        }
         Specification<AuditLogEntity> specification = auditLogSpecification.getFilter(filter);
         Page<AuditLog> audits = auditLogRepository.findAll(specification, pageable).map(auditLogMapper::fromEntityToModel);
         log.debug("Fetched [{}] audits.", audits.getTotalElements());

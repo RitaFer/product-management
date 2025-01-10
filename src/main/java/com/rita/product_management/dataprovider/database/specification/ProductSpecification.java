@@ -23,19 +23,19 @@ public class ProductSpecification extends BaseSpecification<ProductEntity, Produ
             userUpdatedProductJoin = root.join(Field.updatedBy.name(), JoinType.LEFT);
             categoryProductJoin = root.join(Field.category.name(), JoinType.LEFT);
 
-            return Specification.where(attributeEquals(Field.id.name(), filter.id()))
-                    .and(attributeEquals(Field.isActive.name(), filter.isActive()))
-                    .and(attributeEquals(Field.name.name(), filter.name()))
-                    .and(attributeEquals(Field.active.name(), filter.active()))
-                    .and(attributeEquals(Field.sku.name(), filter.active()))
-                    .and(attributeBetweenValues(Field.costValue.name(), filter.costValueInitial(), filter.costValueFinal()))
-                    .and(attributeBetweenValues(Field.icms.name(), filter.icmsInitial(), filter.icmsFinal()))
-                    .and(attributeBetweenValues(Field.saleValue.name(), filter.saleValueInitial(), filter.saleValueFinal()))
-                    .and(attributeBetweenValues(Field.quantityInStock.name(), filter.quantityInStockInitial(), filter.quantityInStockFinal()))
-                    .and(attributeEquals(userCreatedProductJoin, Field.id.name(), filter.createdBy()))
-                    .and(attributeBetweenDates(Field.createdAt.name(), filter.createdAtInitial(), filter.createdAtFinal()))
-                    .and(attributeEquals(userUpdatedProductJoin, Field.id.name(), filter.updatedBy()))
-                    .and(attributeBetweenDates(Field.updatedAt.name(), filter.updatedAtInitial(), filter.updatedAtFinal()))
+            return Specification.where(attributeEquals(Field.id.name(), filter.getId()))
+                    .and(attributeEquals(Field.isActive.name(), filter.getIsActive()))
+                    .and(attributeContains(Field.name.name(), filter.getName()))
+                    .and(attributeEquals(Field.active.name(), filter.getActive()))
+                    .and(attributeEquals(Field.sku.name(), filter.getSku()))
+                    .and(attributeBetweenValues(Field.costValue.name(), filter.getCostValueInitial(), filter.getCostValueFinal()))
+                    .and(attributeBetweenValues(Field.icms.name(), filter.getIcmsInitial(), filter.getIcmsFinal()))
+                    .and(attributeBetweenValues(Field.saleValue.name(), filter.getSaleValueInitial(), filter.getSaleValueFinal()))
+                    .and(attributeBetweenValues(Field.quantityInStock.name(), filter.getQuantityInStockInitial(), filter.getQuantityInStockFinal()))
+                    .and(attributeEquals(userCreatedProductJoin, Field.id.name(), filter.getCreatedBy()))
+                    .and(attributeBetweenDates(Field.createdAt.name(), filter.getCreatedAtInitial(), filter.getCreatedAtFinal()))
+                    .and(attributeEquals(userUpdatedProductJoin, Field.id.name(), filter.getUpdatedBy()))
+                    .and(attributeBetweenDates(Field.updatedAt.name(), filter.getUpdatedAtInitial(), filter.getUpdatedAtFinal()))
                     .toPredicate(root, query, cb);
         };
     }

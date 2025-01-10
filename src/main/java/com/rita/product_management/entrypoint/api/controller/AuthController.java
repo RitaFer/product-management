@@ -17,11 +17,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping(value = "/auth")
 @Tag(name = "Authentication API", description = "Endpoints related to authentication and user management")
-@RequestMapping(value = "/auth", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public interface AuthController {
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Login",
             responses = {
@@ -34,17 +34,10 @@ public interface AuthController {
                             )),
                     @ApiResponse(
                             responseCode = "403",
-                            description = "Invalid Code",
+                            description = "Invalid Information Provided",
                             content = @Content(
                                     schema = @Schema(implementation = ErrorMessage.class),
                                     examples = @ExampleObject(value = "{ \"status\": \"403\", \"message\": \"Invalid username or password\", \"timestamp\": \"2025-01-09 13:30:01\" }")
-                            )),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "User not found",
-                            content = @Content(
-                                    schema = @Schema(implementation = ErrorMessage.class),
-                                    examples = @ExampleObject(value = "{ \"status\": \"404\", \"message\": \"User not found\", \"timestamp\": \"2025-01-09 13:30:01\" }")
                             ))
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -89,7 +82,7 @@ public interface AuthController {
     )
     ResponseEntity<Void> sendResetToken(@RequestParam @NotNull(message = "cannot be null") String username);
 
-    @PostMapping(path = "/change-password")
+    @PostMapping(path = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Change Password",
             responses = {
@@ -113,7 +106,7 @@ public interface AuthController {
                             examples = @ExampleObject(
                                     name = "Valid Change Password Request",
                                     summary = "Example of a valid change password request",
-                                    value = "{ \"token\": \"A2xj09\", \"newPassword\": \"OldPassword@123\", \"confirmNewPassword\": \"NewPassword@123\" }"
+                                    value = "{ \"token\": \"A2xj09\", \"newPassword\": \"NewPassword@123\", \"confirmNewPassword\": \"NewPassword@123\" }"
                             )
                     )
             )

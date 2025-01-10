@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @Component
@@ -32,7 +33,7 @@ public class SendTokenUseCase implements UnitUseCase<SendTokenCommand> {
             emailGateway.sendToken(user.getEmail(), token.getToken());
 
             log.info("Token sent successfully to email: {}", user.getEmail());
-        } catch (Exception e) {
+        } catch (HttpClientErrorException e) {
             log.error("Failed to send token to username: {}", command.username(), e);
             throw new RuntimeException("Failed to send token to user: " + command.username(), e);
         }
