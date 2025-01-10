@@ -25,7 +25,7 @@ public class SwitchCategoryUseCase implements UnitUseCase<SwitchCategoryCommand>
             try {
                 log.debug("Processing switch status for category ID: [{}]", id);
 
-                Category category = categoryGateway.findCategoryById(id);
+                Category category = categoryGateway.findById(id);
                 log.debug("Category found: [{}]", category);
 
                 category.setIsActive(command.isActive());

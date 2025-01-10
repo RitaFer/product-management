@@ -23,7 +23,7 @@ public class UpdateDisplayRuleUseCase implements UseCase<UpdateDisplayRuleComman
         log.info("Executing UpdateDisplayRuleUseCase for displayRule ID: [{}]", command.id());
 
         try {
-            DisplayRule displayRule = displayRuleGateway.findDisplayRuleById(command.id());
+            DisplayRule displayRule = displayRuleGateway.findById(command.id());
             log.debug("DisplayRule found: [{}]", displayRule.getId());
 
             displayRule.setHiddenFields(command.hiddenFields());

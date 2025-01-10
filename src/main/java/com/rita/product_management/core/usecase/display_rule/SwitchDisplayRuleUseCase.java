@@ -31,7 +31,7 @@ public class SwitchDisplayRuleUseCase implements UnitUseCase<SwitchDisplayRuleCo
             }
         }
 
-        DisplayRule displayRule = displayRuleGateway.findDisplayRuleById(command.id());
+        DisplayRule displayRule = displayRuleGateway.findById(command.id());
         log.debug("DisplayRule found: [{}]", displayRule);
 
         displayRule.setIsActive(command.isActive());

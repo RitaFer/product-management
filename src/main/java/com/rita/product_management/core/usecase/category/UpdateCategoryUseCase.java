@@ -24,7 +24,7 @@ public class UpdateCategoryUseCase implements UseCase<UpdateCategoryCommand, Cat
         log.info("Executing UpdateCategoryUseCase for category ID: [{}]", command.id());
 
         try {
-            Category category = categoryGateway.findCategoryById(command.id());
+            Category category = categoryGateway.findById(command.id());
             log.debug("Category found: [{}]", category.getId());
 
             UpdateResult updateResult = updateCategoryFields(category, command);

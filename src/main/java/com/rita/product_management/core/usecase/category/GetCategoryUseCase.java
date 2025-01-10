@@ -22,7 +22,7 @@ public class GetCategoryUseCase implements UseCase<GetCategoryCommand, CategoryR
     public CategoryResponse execute(GetCategoryCommand command) {
         log.info("Executing GetCategoryUseCase: [{}]", command.id());
 
-        Category category = categoryGateway.findCategoryById(command.id());
+        Category category = categoryGateway.findById(command.id());
         return mapToCategoryResponse(category);
     }
 

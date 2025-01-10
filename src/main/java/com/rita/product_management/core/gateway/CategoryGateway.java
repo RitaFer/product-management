@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface CategoryGateway {
     Category save(final Category category);
-    Category findCategoryById(final String id);
+    Category findById(final String id);
     Page<Category> findAll(final Pageable pageable);
     void delete(final String id);
 }

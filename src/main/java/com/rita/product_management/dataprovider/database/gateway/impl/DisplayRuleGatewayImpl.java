@@ -2,7 +2,9 @@ package com.rita.product_management.dataprovider.database.gateway.impl;
 
 import com.rita.product_management.core.common.exception.DisplayRuleNotFoundException;
 import com.rita.product_management.core.domain.DisplayRule;
+import com.rita.product_management.core.domain.enums.UserType;
 import com.rita.product_management.core.gateway.DisplayRuleGateway;
+import com.rita.product_management.dataprovider.database.entity.DisplayRuleEntity;
 import com.rita.product_management.dataprovider.database.repository.DisplayRuleRepository;
 import com.rita.product_management.dataprovider.mapper.DisplayRuleMapper;
 import lombok.AllArgsConstructor;
@@ -11,13 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @AllArgsConstructor
 public class DisplayRuleGatewayImpl implements DisplayRuleGateway {
 
-    private final DisplayRuleRepository displayRuleRepository;
     private final DisplayRuleMapper displayRuleMapper;
+    private final DisplayRuleRepository displayRuleRepository;
 
     @Override
     public DisplayRule save(DisplayRule displayRule) {
@@ -30,16 +34,25 @@ public class DisplayRuleGatewayImpl implements DisplayRuleGateway {
     }
 
     @Override
-    public DisplayRule findDisplayRuleById(String id) {
+    public DisplayRule findById(String id) {
         log.debug("Searching for DisplayRule by ID: [{}]", id);
         return findDisplayRuleOrThrow(id);
+    }
+
+    @Override
+    public List<String> getHiddenFieldsForRole(UserType role) {
+        DisplayRuleEntity rule = displayRuleRepository
+                .findByRole(role.name())
+                .orElseThrow(() ->
+                new DisplayRuleNotFoundException("DisplayRule with role = " + role + " not found."));
+        return rule.getHiddenFields();
     }
 
     @Override
     public Boolean existsAnotherActiveDisplayRule() {
         log.debug("Checking if another active DisplayRule exists...");
         boolean exists = displayRuleRepository.existsByIsActiveIsTrue();
-        log.info("Exists another active DisplayRule: [{}]", exists);
+        log.debug("Exists another active DisplayRule: [{}]", exists);
         return exists;
     }
 
@@ -47,7 +60,7 @@ public class DisplayRuleGatewayImpl implements DisplayRuleGateway {
     public Page<DisplayRule> findAll(Pageable pageable) {
         log.debug("Fetching all DisplayRules with pagination: [{}]", pageable);
         Page<DisplayRule> displayRules = displayRuleRepository.findAll(pageable).map(displayRuleMapper::fromEntityToModel);
-        log.info("Fetched [{}] DisplayRules.", displayRules.getTotalElements());
+        log.debug("Fetched [{}] DisplayRules.", displayRules.getTotalElements());
         return displayRules;
     }
 

@@ -5,10 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
@@ -55,21 +51,18 @@ public class ProductEntity {
     @Column(name = "quantity_in_stock", nullable = false)
     private Long quantityInStock;
 
-    @CreatedBy
+    //TODO: Implement @Annotations for this cases, for example @CreatedBy/@CreatedDate/@LastModifiedBy/@LastModifiedDate
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false, updatable = false)
     private UserEntity createdBy;
 
-    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedBy
     @ManyToOne
     @JoinColumn(name = "updated_by", nullable = false)
     private UserEntity updatedBy;
 
-    @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 

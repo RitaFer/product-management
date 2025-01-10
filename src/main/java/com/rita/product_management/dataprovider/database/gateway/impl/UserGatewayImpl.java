@@ -55,7 +55,7 @@ public class UserGatewayImpl implements UserGateway, UserDetailsService {
     public User save(User user) {
         log.debug("Saving user: [{}]", user.getUsername());
         User savedUser = userMapper.fromEntityToModel(userRepository.save(userMapper.fromModelToEntity(user)));
-        log.info("User [{}] saved successfully.", savedUser.getUsername());
+        log.debug("User [{}] saved successfully.", savedUser.getUsername());
         return savedUser;
     }
 
@@ -63,7 +63,7 @@ public class UserGatewayImpl implements UserGateway, UserDetailsService {
     public void delete(User user) {
         log.debug("Deleting user: [{}]", user.getUsername());
         userRepository.delete(userMapper.fromModelToEntity(user));
-        log.info("User [{}] deleted successfully.", user.getUsername());
+        log.debug("User [{}] deleted successfully.", user.getUsername());
     }
 
     @Override

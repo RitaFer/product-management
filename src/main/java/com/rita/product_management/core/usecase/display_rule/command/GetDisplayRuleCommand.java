@@ -4,7 +4,7 @@ import com.rita.product_management.core.usecase.Command;
 import jakarta.validation.constraints.NotNull;
 
 public record GetDisplayRuleCommand(
-        @NotNull(message = "cannot be null") String id
+        @NotNull String id
 ) implements Command {
 
 }

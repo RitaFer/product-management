@@ -1,5 +1,6 @@
 package com.rita.product_management.dataprovider.database.entity;
 
+import com.rita.product_management.core.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,5 +28,9 @@ public class DisplayRuleEntity {
 
     @Column(name = "hidden_fields", nullable = false)
     private List<String> hiddenFields;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType role = UserType.STOCKIST;
 
 }

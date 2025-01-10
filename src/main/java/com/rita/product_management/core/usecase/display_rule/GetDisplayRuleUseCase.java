@@ -22,7 +22,7 @@ public class GetDisplayRuleUseCase implements UseCase<GetDisplayRuleCommand, Dis
     public DisplayRuleResponse execute(GetDisplayRuleCommand command) {
         log.info("Executing GetDisplayRuleUseCase: [{}]", command.id());
 
-        DisplayRule displayRule = categoryGateway.findDisplayRuleById(command.id());
+        DisplayRule displayRule = categoryGateway.findById(command.id());
         return mapToDisplayRuleResponse(displayRule);
     }
 

@@ -21,16 +21,16 @@ public class CategoryGatewayImpl implements CategoryGateway {
 
     @Override
     public Category save(Category category) {
-        log.info("Saving category with details: [{}]", category);
+        log.debug("Saving category with details: [{}]", category);
         Category savedCategory = categoryMapper.fromEntityToModel(
                 categoryRepository.save(categoryMapper.fromModelToEntity(category))
         );
-        log.info("Category saved successfully with ID: [{}]", savedCategory.getId());
+        log.debug("Category saved successfully with ID: [{}]", savedCategory.getId());
         return savedCategory;
     }
 
     @Override
-    public Category findCategoryById(String id) {
+    public Category findById(String id) {
         log.debug("Searching for category by ID: [{}]", id);
         return findCategoryOrThrow(id);
     }
@@ -39,16 +39,16 @@ public class CategoryGatewayImpl implements CategoryGateway {
     public Page<Category> findAll(Pageable pageable) {
         log.debug("Fetching all categories with pagination: [{}]", pageable);
         Page<Category> categories = categoryRepository.findAll(pageable).map(categoryMapper::fromEntityToModel);
-        log.info("Fetched [{}] Categories.", categories.getTotalElements());
+        log.debug("Fetched [{}] Categories.", categories.getTotalElements());
         return categories;
     }
 
     @Override
     public void delete(String id) {
-        log.info("Deleting category with ID: [{}]", id);
+        log.debug("Deleting category with ID: [{}]", id);
         Category category = findCategoryOrThrow(id);
         categoryRepository.delete(categoryMapper.fromModelToEntity(category));
-        log.info("Category [{}] deleted successfully.", id);
+        log.debug("Category [{}] deleted successfully.", id);
     }
 
     private void validateId(String id) {
