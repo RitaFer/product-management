@@ -2,7 +2,6 @@ package com.rita.product_management.core.usecase.product;
 
 import com.rita.product_management.core.domain.Product;
 import com.rita.product_management.core.gateway.ProductGateway;
-import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UseCase;
 import com.rita.product_management.core.usecase.product.command.GetProductListCommand;
 import com.rita.product_management.entrypoint.api.dto.response.ProductReportResponse;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+
 @Slf4j
 @Component
 @Validated

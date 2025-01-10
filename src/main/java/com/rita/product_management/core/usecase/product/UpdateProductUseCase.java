@@ -1,10 +1,13 @@
 package com.rita.product_management.core.usecase.product;
 
 import com.rita.product_management.core.common.exception.NoChangesException;
+import com.rita.product_management.core.domain.AuditLog;
 import com.rita.product_management.core.domain.Category;
 import com.rita.product_management.core.domain.Product;
+import com.rita.product_management.core.domain.enums.ActionType;
 import com.rita.product_management.core.domain.enums.UserType;
 import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.gateway.AuditLogGateway;
 import com.rita.product_management.core.gateway.CategoryGateway;
 import com.rita.product_management.core.gateway.ProductGateway;
 import com.rita.product_management.core.gateway.UserGateway;
@@ -14,6 +17,7 @@ import com.rita.product_management.entrypoint.api.dto.response.CategoryProductRe
 import com.rita.product_management.entrypoint.api.dto.response.ProductResponse;
 import com.rita.product_management.entrypoint.api.dto.response.UserProductResponse;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +28,9 @@ import org.springframework.validation.annotation.Validated;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -34,6 +41,7 @@ public class UpdateProductUseCase implements UseCase<UpdateProductCommand, Produ
     private final UserGateway userGateway;
     private final ProductGateway productGateway;
     private final CategoryGateway categoryGateway;
+    private final AuditLogGateway auditLogGateway;
 
     @Override
     public ProductResponse execute(UpdateProductCommand command) {
@@ -51,11 +59,14 @@ public class UpdateProductUseCase implements UseCase<UpdateProductCommand, Produ
                 throw new NoChangesException("No fields were updated.");
             }
 
-            product.setUpdatedBy(getUser());
+            User updatedBy = getUser();
+            product.setUpdatedBy(updatedBy);
             product.setUpdatedAt(updatedDate);
 
             Product updatedProduct = productGateway.save(product);
-            log.info("Product successfully updated: [{}]", updatedProduct);
+            log.debug("Product successfully updated: [{}]", updatedProduct);
+
+            saveAuditLogs(product.getId(), updatedBy, updatedDate, updateResult);
 
             ProductResponse response = mapProductToProductResponse(updatedProduct);
             log.info("ProductResponse successfully created for product: [{}]", response.id());
@@ -75,79 +86,94 @@ public class UpdateProductUseCase implements UseCase<UpdateProductCommand, Produ
         UpdateResult result = new UpdateResult();
 
         if (!product.getName().equals(command.name())) {
+            result.addChange("name", product.getName(), command.name());
             product.setName(command.name());
-            result.addChange("name");
         }
 
         if (!product.getActive().equals(command.active())) {
+            result.addChange("active", product.getActive(), command.active());
             product.setActive(command.active());
-            result.addChange("active");
         }
 
         if (!product.getSku().equals(command.sku())) {
+            result.addChange("sku", product.getSku(), command.sku());
             product.setSku(command.sku());
-            result.addChange("sku");
         }
 
-        Category category = categoryGateway.findById(command.categoryId());
+        Category category = getCategory(command.categoryId());
         if (!product.getCategory().equals(category)) {
+            result.addChange("category", product.getCategory().getName(), category.getName());
             product.setCategory(category);
-            result.addChange("category");
         }
 
-        if(getUserRole() == UserType.ADMIN){
+        if (getUserRole() == UserType.ADMIN) {
             if (!product.getCostValue().equals(command.costValue())) {
+                result.addChange("costValue", product.getCostValue(), command.costValue());
                 product.setCostValue(command.costValue());
-                result.addChange("costValue");
             }
 
             if (!product.getIcms().equals(command.icms())) {
+                result.addChange("icms", product.getIcms(), command.icms());
                 product.setIcms(command.icms());
-                result.addChange("icms");
             }
         }
 
         if (!product.getSaleValue().equals(command.saleValue())) {
+            result.addChange("saleValue", product.getSaleValue(), command.saleValue());
             product.setSaleValue(command.saleValue());
-            result.addChange("saleValue");
         }
 
         if (!product.getQuantityInStock().equals(command.quantityInStock())) {
+            result.addChange("quantityInStock", product.getQuantityInStock(), command.quantityInStock());
             product.setQuantityInStock(command.quantityInStock());
-            result.addChange("quantityInStock");
         }
 
         log.debug("Fields updated for product ID: [{}]: [{}]", product.getId(), result.getChangesDescription());
         return result;
     }
 
+    private void saveAuditLogs(String productId, User user, LocalDateTime updatedDate, UpdateResult updateResult) {
+        updateResult.getChanges().forEach(change -> {
+            AuditLog auditLog = AuditLog.builder()
+                    .entityName("Product")
+                    .entityId(productId)
+                    .action(ActionType.UPDATE)
+                    .field(change.field())
+                    .oldValue(change.oldValue().toString())
+                    .newValue(change.newValue().toString())
+                    .modifiedBy(user)
+                    .modifiedDate(updatedDate)
+                    .build();
+
+            auditLogGateway.save(auditLog);
+            log.debug("Audit log registered for product ID: [{}], field: [{}]", productId, change.field());
+        });
+    }
+
+    @Getter
     private static class UpdateResult {
-        private final StringBuilder changesDescription;
-        private boolean hasChanges;
+        private final List<Change> changes = new ArrayList<>();
 
-        public UpdateResult() {
-            this.changesDescription = new StringBuilder("Updated fields: ");
-            this.hasChanges = false;
-        }
-
-        public void addChange(String field) {
-            changesDescription.append(field).append(", ");
-            hasChanges = true;
+        public void addChange(String field, Object oldValue, Object newValue) {
+            changes.add(new Change(field, oldValue, newValue));
         }
 
         public boolean hasChanges() {
-            return hasChanges;
+            return !changes.isEmpty();
         }
 
         public String getChangesDescription() {
-            if (hasChanges) {
-                changesDescription.setLength(changesDescription.length() - 2);
-            }
-            return changesDescription.toString();
+            return changes.stream()
+                    .map(change -> change.field() + ": " + change.oldValue() + " -> " + change.newValue())
+                    .collect(Collectors.joining(", "));
         }
     }
 
-    private User getUser(){
+        private record Change(String field, Object oldValue, Object newValue) {
+
+    }
+
+    private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = null;
 
@@ -156,14 +182,14 @@ public class UpdateProductUseCase implements UseCase<UpdateProductCommand, Produ
             if (principal instanceof UserDetails) {
                 username = ((UserDetails) principal).getUsername();
             } else {
-                username =  principal.toString();
+                username = principal.toString();
             }
         }
 
         return userGateway.findUserByUsername(username);
     }
 
-    private Category getCategory(final String id){
+    private Category getCategory(final String id) {
         return categoryGateway.findById(id);
     }
 

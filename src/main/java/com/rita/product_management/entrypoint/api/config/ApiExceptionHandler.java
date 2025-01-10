@@ -74,6 +74,13 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(errorMessage, NOT_FOUND);
     }
 
+    @ResponseStatus(value = NOT_FOUND)
+    @ExceptionHandler(AuditNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleAuditNotFoundException(AuditNotFoundException ex){
+        var errorMessage = new ErrorMessage(NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(errorMessage, NOT_FOUND);
+    }
+
     @ResponseStatus(value = INTERNAL_SERVER_ERROR)
     @ExceptionHandler(JwtParsingException.class)
     public ResponseEntity<ErrorMessage> handleJwtParsingException(){

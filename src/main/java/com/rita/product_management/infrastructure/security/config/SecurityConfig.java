@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/accounts/**").hasRole("ADMIN")
                         .requestMatchers("/rules/**").hasRole("ADMIN")
+                        .requestMatchers("/audit/**").hasRole("ADMIN")
                         .requestMatchers("/categories/**").hasRole("STOCKIST")
                         .requestMatchers("/products/**").hasRole("STOCKIST")
                         .anyRequest().authenticated()

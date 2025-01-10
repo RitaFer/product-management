@@ -1,8 +1,11 @@
 package com.rita.product_management.core.usecase.product;
 
+import com.rita.product_management.core.domain.AuditLog;
 import com.rita.product_management.core.domain.Category;
 import com.rita.product_management.core.domain.Product;
+import com.rita.product_management.core.domain.enums.ActionType;
 import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.gateway.AuditLogGateway;
 import com.rita.product_management.core.gateway.CategoryGateway;
 import com.rita.product_management.core.gateway.ProductGateway;
 import com.rita.product_management.core.gateway.UserGateway;
@@ -32,6 +35,7 @@ public class CreateProductUseCase implements UseCase<CreateProductCommand, Produ
     private final UserGateway userGateway;
     private final ProductGateway productGateway;
     private final CategoryGateway categoryGateway;
+    private final AuditLogGateway auditLogGateway;
 
     @Override
     public ProductResponse execute(CreateProductCommand command) {
@@ -41,18 +45,37 @@ public class CreateProductUseCase implements UseCase<CreateProductCommand, Produ
             Product product = productGateway.save(mapCommandToProduct(command));
             log.debug("Product created and saved successfully: [{}]", product.getId());
 
+            saveAuditLog(product);
+
             ProductResponse response = mapProductToProductResponse(product);
             log.info("ProductResponse successfully created for product: [{}]", response.id());
 
             return response;
-
         } catch (Exception e) {
-            log.error("Unexpected error occurred during account creation for name: [{}]", command.name(), e);
+            log.error("Unexpected error occurred during product creation for name: [{}]", command.name(), e);
             throw new RuntimeException("Failed to execute CreateProductUseCase", e);
         }
     }
 
-    private User getUser(){
+    private void saveAuditLog(Product product) {
+        log.debug("Registering audit log for product: [{}]", product.getId());
+
+        AuditLog auditLog = AuditLog.builder()
+                .entityName("product")
+                .entityId(product.getId())
+                .action(ActionType.CREATE)
+                .field(null)
+                .oldValue(null)
+                .newValue(product.toString())
+                .modifiedBy(product.getCreatedBy())
+                .modifiedDate(product.getCreatedAt())
+                .build();
+
+        auditLogGateway.save(auditLog);
+        log.debug("Audit log registered successfully for product: [{}]", product.getId());
+    }
+
+    private User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = null;
 
@@ -61,14 +84,14 @@ public class CreateProductUseCase implements UseCase<CreateProductCommand, Produ
             if (principal instanceof UserDetails) {
                 username = ((UserDetails) principal).getUsername();
             } else {
-                username =  principal.toString();
+                username = principal.toString();
             }
         }
 
         return userGateway.findUserByUsername(username);
     }
 
-    private Category getCategory(final String id){
+    private Category getCategory(final String id) {
         return categoryGateway.findById(id);
     }
 

@@ -1,13 +1,13 @@
-package com.rita.product_management.core.usecase.product.command;
+package com.rita.product_management.core.usecase.audit_log.command;
 
 import com.rita.product_management.core.usecase.Command;
-import com.rita.product_management.entrypoint.api.dto.filters.ProductFilter;
+import com.rita.product_management.entrypoint.api.dto.filters.AuditFilter;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 
-public record GetProductListCommand(
+public record GetAuditLogListCommand(
         @NotNull Pageable pageable,
-        ProductFilter filter
+        AuditFilter filter
 ) implements Command {
 
 }
