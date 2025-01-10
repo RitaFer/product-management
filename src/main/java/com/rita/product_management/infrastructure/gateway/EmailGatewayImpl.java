@@ -2,8 +2,9 @@ package com.rita.product_management.infrastructure.gateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.EmailGateway;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -18,71 +19,90 @@ import java.util.Map;
 @Component
 public class EmailGatewayImpl implements EmailGateway {
 
-    @Value("${email-server.key:}")
+    @Value("${email-server.key}")
     private String KEY;
+
+    @Value("${email-server.url}")
+    private String emailApiUrl;
+
+    @Value("${email-server.from-email}")
+    private String fromEmail;
+
+    @Value("${email-server.from-name}")
+    private String fromName;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String EMAIL_API_URL = "https://send.api.mailtrap.io/api/send";
+
+    @PostConstruct
+    private void validateKey() {
+        if (KEY == null || KEY.isEmpty()) {
+            throw new IllegalStateException("Email server key is not configured. Please check your application properties.");
+        }
+        log.info("Email server key validated successfully.");
+    }
 
     @Override
     public void sendToken(String to, String token) {
-        log.info("Sending token email to: [{}]", to);
-        try {
-            String jsonBody = createJsonBody("New code for reset password", "Your code is: \"" + token + "\"", to);
-            createEmailRequest(jsonBody);
-            log.info("Token email successfully sent to: [{}]", to);
-        } catch (Exception e) {
-            handleException("sendToken", e, to);
-        }
+        sendEmailRequest("New Code For Reset Password", "Your code is: \"" + token + "\"", to);
     }
 
     @Override
     public void sendUpdateNotification(String to, String updateInfo) {
-        log.info("Sending update notification email to: [{}]", to);
-        try {
-            String jsonBody = createJsonBody("New Update In Your Account", "Update Info: \"" + updateInfo + "\"", to);
-            createEmailRequest(jsonBody);
-            log.info("Update notification email successfully sent to: [{}]", to);
-        } catch (Exception e) {
-            handleException("sendUpdateNotification", e, to);
-        }
+        sendEmailRequest("New Update In Your Account", "Update info: \"" + updateInfo + "\"", to);
     }
 
     @Override
     public void sendDeleteNotification(String to) {
-        log.info("Sending delete notification email to: [{}]", to);
-        try {
-            String jsonBody = createJsonBody(
-                    "Your Account Was Deleted",
-                    "Your account was deleted from our system. If you have any questions, please let us know.",
-                    to
-            );
-            createEmailRequest(jsonBody);
-            log.info("Delete notification email successfully sent to: [{}]", to);
-        } catch (Exception e) {
-            handleException("sendDeleteNotification", e, to);
-        }
+        sendEmailRequest(
+                "Your Account Was Deleted",
+                "Your account was deleted from our system. If you have any questions, please let us know.",
+                to
+        );
     }
 
     @Override
     public void sendCreateAccountNotification(User accountCreated) {
-        log.info("Sending account creation notification email to: [{}]", accountCreated.getEmail());
+        sendEmailRequest(
+                "Your Account Was Created",
+                "Your username is: " + accountCreated.getUsername() + "\nYour password is: " + accountCreated.getPassword(),
+                accountCreated.getEmail()
+        );
+    }
+
+    private void sendEmailRequest(String subject, String text, String to) {
         try {
-            String jsonBody = createJsonBody(
-                    "Your Account Was Created",
-                    "Your password is: \"" + accountCreated.getPassword() + "\"",
-                    accountCreated.getEmail()
+            String jsonBody = objectMapper.writeValueAsString(createBaseEmailBody(subject, text, to));
+            HttpHeaders headers = createHeaders();
+            HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    emailApiUrl,
+                    HttpMethod.POST,
+                    requestEntity,
+                    String.class
             );
-            createEmailRequest(jsonBody);
-            log.info("Account creation notification email successfully sent to: [{}]", accountCreated.getEmail());
+
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                log.error("Failed to send email. Status: [{}], Body: [{}]", response.getStatusCode(), response.getBody());
+            }
+
+            log.info("Email sent successfully to: [{}], Subject: [{}]", to, subject);
+        } catch (JsonProcessingException e) {
+            log.error("Error while processing JSON for email to [{}]: {}", to, e.getMessage(), e);
         } catch (Exception e) {
-            handleException("sendCreateAccountNotification", e, accountCreated.getEmail());
+            log.error("Error while sending email to [{}]: {}", to, e.getMessage(), e);
         }
     }
 
-    private String createJsonBody(String subject, String text, String to) throws JsonProcessingException {
-        log.debug("Creating JSON body for email to: [{}], subject: [{}]", to, subject);
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + KEY);
+        return headers;
+    }
+
+    private Map<String, Object> createBaseEmailBody(String subject, String text, String to) {
         Map<String, Object> jsonBody = createJsonBodyHeader();
         Map<String, String> recipient = new HashMap<>();
         recipient.put("email", to);
@@ -91,52 +111,16 @@ public class EmailGatewayImpl implements EmailGateway {
         jsonBody.put("subject", subject);
         jsonBody.put("text", text);
 
-        String json = objectMapper.writeValueAsString(jsonBody);
-        log.debug("JSON body created successfully for email to: [{}]", to);
-        return json;
-    }
-
-    private void createEmailRequest(String jsonBody) {
-        log.debug("Sending email request to Mailtrap API...");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + KEY);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    EMAIL_API_URL,
-                    HttpMethod.POST,
-                    requestEntity,
-                    String.class
-            );
-            if (response.getStatusCode() != HttpStatus.OK) {
-                log.error("Failed to send email. Response status: [{}], body: [{}]",
-                        response.getStatusCode(), response.getBody());
-                throw new RuntimeException("Failed to send email: " + response.getStatusCode());
-            }
-            log.debug("Email request sent successfully. Response: [{}]", response.getBody());
-        } catch (Exception e) {
-            log.error("Error while sending email request to Mailtrap API: [{}]", e.getMessage(), e);
-            throw new RuntimeException("Error while sending email request", e);
-        }
-    }
-
-    private Map<String, Object> createJsonBodyHeader() {
-        log.debug("Creating email JSON header...");
-        Map<String, Object> jsonBody = new HashMap<>();
-        Map<String, String> from = new HashMap<>();
-        from.put("email", "hello@demomailtrap.com");
-        from.put("name", "Mailtrap Test");
-
-        jsonBody.put("from", from);
-        log.debug("Email JSON header created successfully.");
         return jsonBody;
     }
 
-    private void handleException(String methodName, Exception e, String recipient) {
-        log.error("Error in method [{}] while sending email to [{}]: [{}]", methodName, recipient, e.getMessage(), e);
+    private Map<String, Object> createJsonBodyHeader() {
+        Map<String, Object> jsonBody = new HashMap<>();
+        Map<String, String> from = new HashMap<>();
+        from.put("email", fromEmail);
+        from.put("name", fromName);
+        jsonBody.put("from", from);
+        return jsonBody;
     }
 
 }

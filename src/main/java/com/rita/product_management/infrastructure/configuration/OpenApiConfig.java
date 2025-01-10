@@ -44,11 +44,11 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI defineOpenApi() {
         Server developmentServer = new Server();
-        developmentServer.setUrl("http://localhost:8080");
+        developmentServer.setUrl("http://localhost:8080/api/v1");
         developmentServer.setDescription("Local");
 
         Server productionServer = new Server();
-        productionServer.setUrl("https://rita-product-management-763d144bcf95.herokuapp.com");
+        productionServer.setUrl("https://rita-product-management-763d144bcf95.herokuapp.com/api/v1");
         productionServer.setDescription("Production");
 
         Contact myContact = new Contact();

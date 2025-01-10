@@ -1,6 +1,6 @@
 package com.rita.product_management.core.usecase.account;
 
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UseCase;
 import com.rita.product_management.core.usecase.account.command.GetAccountListCommand;
@@ -37,7 +37,7 @@ public class GetAccountListUseCase implements UseCase<GetAccountListCommand, Pag
 
     private AccountsResponse mapToAccountsResponse(User account) {
         log.debug("Mapping User to AccountsResponse for userId: [{}]", account.getId());
-        return new AccountsResponse(account.getId(), account.getActive(), account.getName());
+        return new AccountsResponse(account.getId(), account.getIsActive(), account.getName());
     }
 
 }

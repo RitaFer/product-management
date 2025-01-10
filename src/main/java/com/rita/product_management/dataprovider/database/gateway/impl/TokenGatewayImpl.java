@@ -9,7 +9,6 @@ import com.rita.product_management.dataprovider.mapper.TokenMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +21,11 @@ public class TokenGatewayImpl implements TokenGateway {
 
     private final TokenRepository tokenRepository;
     private final TokenMapper tokenMapper;
+
+    @Override
+    public void save(Token token) {
+        tokenRepository.save(tokenMapper.fromModelToEntity(token));
+    }
 
     @Override
     public Token generateToken(String userId) {
@@ -43,36 +47,12 @@ public class TokenGatewayImpl implements TokenGateway {
     }
 
     @Override
-    public Boolean validateToken(String code) {
+    public Optional<Token> validateToken(String code) {
         log.info("Validating token: [{}]", code);
 
-        Optional<Token> validToken = tokenRepository
-                .findByTokenAndTokenUsedFalseAndExpiredAtIsAfter(code, LocalDateTime.now())
+        return tokenRepository
+                .findByTokenAndTokenUsedFalseAndExpiredAtIsAfterAndTokenUsedIsFalse(code, LocalDateTime.now())
                 .map(tokenMapper::fromEntityToModel);
-
-        if (validToken.isEmpty()) {
-            log.warn("Validation failed for token: [{}]. Token is either expired or already used.", code);
-            return false;
-        } else {
-            Token token = validToken.get();
-            token.setTokenUsed(true);
-            tokenRepository.save(tokenMapper.fromModelToEntity(token));
-            log.info("Token validated and marked as used: [{}]", code);
-
-            return token.getToken().equalsIgnoreCase(code);
-        }
-    }
-
-    @Override
-    public Token findToken(String token) {
-        log.info("Searching for token: [{}]", token);
-
-        return tokenRepository.findByToken(token)
-                .map(tokenMapper::fromEntityToModel)
-                .orElseThrow(() -> {
-                    log.error("Token not found: [{}]", token);
-                    return new NotFoundException("Token not found");
-                });
     }
 
     private boolean canGenerateNewToken(String userId) {
@@ -84,7 +64,7 @@ public class TokenGatewayImpl implements TokenGateway {
                 .toList();
 
         if (!lastCodes.isEmpty()) {
-            LocalDateTime lastTokenTime = lastCodes.get(0).getCreatedAt();
+            LocalDateTime lastTokenTime = lastCodes.getFirst().getCreatedAt();
             boolean canGenerate = lastTokenTime.plusMinutes(1).isBefore(LocalDateTime.now());
 
             if (canGenerate) {

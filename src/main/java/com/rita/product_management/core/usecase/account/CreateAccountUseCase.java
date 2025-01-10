@@ -1,6 +1,6 @@
 package com.rita.product_management.core.usecase.account;
 
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.EmailGateway;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UseCase;
@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @Component
@@ -36,11 +37,11 @@ public class CreateAccountUseCase implements UseCase<CreateAccountCommand, Accou
             log.debug("Create account notification email sent successfully to: [{}]", user.getEmail());
 
             AccountResponse response = mapToAccountResponse(user);
-            log.debug("AccountResponse successfully created for user: [{}]", response);
+            log.info("AccountResponse successfully created for user: [{}]", response.id());
 
             return response;
 
-        } catch (Exception e) {
+        } catch (HttpClientErrorException e) {
             log.error("Unexpected error occurred during account creation for email: [{}]", command.email(), e);
             throw new RuntimeException("Failed to execute CreateAccountUseCase", e);
         }
@@ -50,6 +51,7 @@ public class CreateAccountUseCase implements UseCase<CreateAccountCommand, Accou
         log.debug("Mapping User to AccountResponse for userId: [{}]", user.getId());
         return new AccountResponse(
                 user.getId(),
+                user.getUsername(),
                 user.getName(),
                 user.getEmail(),
                 user.getRole()

@@ -1,6 +1,6 @@
 package com.rita.product_management.dataprovider.mapper;
 
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.dataprovider.database.entity.UserEntity;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;

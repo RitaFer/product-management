@@ -1,7 +1,7 @@
 package com.rita.product_management.core.usecase.account;
 
 import com.rita.product_management.core.common.exception.NoChangesException;
-import com.rita.product_management.core.domain.user.User;
+import com.rita.product_management.core.domain.User;
 import com.rita.product_management.core.gateway.EmailGateway;
 import com.rita.product_management.core.gateway.UserGateway;
 import com.rita.product_management.core.usecase.UseCase;
@@ -24,11 +24,10 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
     @Override
     public AccountResponse execute(UpdateAccountCommand command) {
         log.info("Executing UpdateAccountUseCase for user ID: [{}]", command.id());
+        User user = userGateway.findUserById(command.id());
+        log.debug("User found: [{}]", user);
 
         try {
-            User user = userGateway.findUserById(command.id());
-            log.debug("User found: [{}]", user);
-
             UpdateResult updateResult = updateUserFields(user, command);
 
             if (!updateResult.hasChanges()) {
@@ -43,10 +42,9 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
             log.debug("Update notification email sent successfully to: [{}]", updatedUser.getEmail());
 
             AccountResponse response = mapToAccountResponse(updatedUser);
-            log.debug("AccountResponse successfully created for user: [{}]", response);
+            log.info("AccountResponse successfully created for user: [{}]", response.id());
 
             return response;
-
         } catch (NoChangesException e) {
             log.warn("No changes detected for user ID: [{}]. Message: [{}]", command.id(), e.getMessage());
             throw e;
@@ -83,6 +81,7 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
         log.debug("Mapping User to AccountResponse for user ID: [{}]", user.getId());
         return new AccountResponse(
                 user.getId(),
+                user.getUsername(),
                 user.getName(),
                 user.getEmail(),
                 user.getRole()
@@ -108,9 +107,6 @@ public class UpdateAccountUseCase implements UseCase<UpdateAccountCommand, Accou
         }
 
         public String getChangesDescription() {
-            if (hasChanges) {
-                changesDescription.setLength(changesDescription.length() - 2);
-            }
             return changesDescription.toString();
         }
     }

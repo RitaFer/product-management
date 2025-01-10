@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 @Data
 @Entity
 @Builder
@@ -24,16 +23,17 @@ public class TokenEntity {
     @Column(nullable = false, unique = true, updatable = false)
     private String token;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "user_id", nullable = false, updatable = false)
     private String userId;
 
-    @Column(nullable = false)
+    @Column(name = "token_used", nullable = false)
     private Boolean tokenUsed;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "expired_at", nullable = false)
     private LocalDateTime expiredAt;
+
 }
 

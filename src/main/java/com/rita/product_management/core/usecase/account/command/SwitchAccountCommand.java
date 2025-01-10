@@ -7,7 +7,7 @@ import java.util.List;
 
 public record SwitchAccountCommand(
         @NotNull List<String> ids,
-        @NotNull Boolean active
+        @NotNull Boolean isActive
 ) implements Command {
 
 }

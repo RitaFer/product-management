@@ -1,6 +1,6 @@
 package com.rita.product_management.core.common.util;
+
 import com.rita.product_management.dataprovider.database.entity.UserEntity;
-import com.rita.product_management.core.domain.enums.UserType;
 import com.rita.product_management.dataprovider.database.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -23,34 +23,14 @@ public class DataInitializer {
             Optional<UserEntity> stockistUser = userRepository.findByUsername("stockist");
 
             adminUser.ifPresent(user -> {
-                log.warn("Admin user already exists. Deleting existing user...");
-                userRepository.delete(user);
+                adminUser.get().setPassword(passwordEncoder.encode("Admin@123"));
+                userRepository.save(user);
             });
 
             stockistUser.ifPresent(user -> {
-                log.warn("Stockist user already exists. Deleting existing user...");
-                userRepository.delete(user);
+                stockistUser.get().setPassword(passwordEncoder.encode("Stockist@123"));
+                userRepository.save(user);
             });
-
-            UserEntity admin = new UserEntity();
-            admin.setActive(true);
-            admin.setName("First Admin User");
-            admin.setUsername("admin");
-            admin.setEmail("rialf.ferreira@gmail.com");
-            admin.setPassword(passwordEncoder.encode("Admin@123"));
-            admin.setRole(UserType.ADMIN);
-            userRepository.save(admin);
-            log.info("Admin user created: {}", admin.getId());
-
-            UserEntity stockist = new UserEntity();
-            stockist.setActive(true);
-            stockist.setName("First Stockist User");
-            stockist.setUsername("stockist");
-            stockist.setEmail("iwjkwoods@gmail.com");
-            stockist.setPassword(passwordEncoder.encode("Stockist@123"));
-            stockist.setRole(UserType.STOCKIST);
-            userRepository.save(stockist);
-            log.info("Stockist user created: {}", stockist.getId());
 
             log.info("Default users initialized successfully!");
         };

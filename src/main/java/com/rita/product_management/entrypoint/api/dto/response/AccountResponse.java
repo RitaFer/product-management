@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record AccountResponse(
         @NotNull String id,
+        @NotNull String username,
         @NotNull String name,
         @NotNull String email,
         @NotNull UserType role

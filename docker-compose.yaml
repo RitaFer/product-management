@@ -28,5 +28,9 @@ services:
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: xwm@kyv9ydn1JPW.dch
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      LOG_LEVEL: DEBUG
+      SPRING_PROFILES_ACTIVE: Development
+      EMAIL_SERVER_KEY: 776ee04896f1b54148bf07acaef1d6c9
+      JWT_SECRET: 776ee04896f1b54148bf07acaef1d6c9
 volumes:
   mysql_data:
